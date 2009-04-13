@@ -41,10 +41,11 @@
       
     },
     
-    testTruth: function() { with(this) {
-      assert(true);
-    }}
-      
+    testGetTorrents: function() {
+      var transmission = new Transmission();
+      this.assertEnumEqual([], transmission.getTorrents());
+    }
+    
   }, {testLog: "testlog"}); 
   // For each Test.UnitRunner instance, specify the element id where results will be
   // published; e.g. <div id="testlog"/> above.
