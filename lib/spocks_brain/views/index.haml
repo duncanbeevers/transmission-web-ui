@@ -1,2 +1,8 @@
 %h1 Spock's Brain
-%iframe#runnerFrame{ :src => '/test/1' }
+%form#testRunControls
+  .testNameControls
+    %label{ :for => 'testName' } Test name
+    %input#testName.testName
+  .startTest
+    %button Start
+%iframe#runnerFrame{ :src => '/test/controllers/torrent_list_manager' }

@@ -2,12 +2,10 @@ require 'rubygems'
 require 'sinatra'
 require 'sprockets'
 require 'ruby-debug'
+require 'json'
 
 if !(defined?(APP_ROOT))
   APP_ROOT = File.expand_path(File.join(File.dirname(__FILE__), '../..'))
-end
-if !(defined?(TEST_ASSETS_DIR))
-  TEST_ASSETS_DIR = File.join(APP_ROOT, 'test/assets')
 end
 if !(defined?(TEST_ROOT))
   TEST_ROOT = File.join(APP_ROOT, 'test/unit')
@@ -16,15 +14,16 @@ if !(defined?(SRC_ROOT))
   SRC_ROOT = File.join(APP_ROOT, 'src')
 end
 
-
-set :public, TEST_ASSETS_DIR
-
 get '/' do
   haml :index
 end
 
 get '/test/*' do
   @object_under_test = params[:splat]
+  @object_under_test_file_name = "#{@object_under_test}.js"
+  @test_file_name = "#{@object_under_test}_test.js"
+  @test_log = "#{@object_under_test}_log"
+  @function_returning_test_methods = File.read(File.join(TEST_ROOT, @test_file_name))
   haml :test, :layout => :test_layout
 end
 
