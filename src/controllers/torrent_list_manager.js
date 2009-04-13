@@ -1,3 +1,5 @@
+//= require <prototype>
+
 try { Transmission; } catch(_) { Transmission = {}; }
 /* Transmission TorrentListManager establishes a top-level
     namespace for all application objects
