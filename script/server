@@ -1,0 +1,2 @@
+#!/bin/sh
+ruby lib/spocks_brain/spocks_brain_sinatra_server.rb
