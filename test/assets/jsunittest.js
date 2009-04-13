@@ -378,15 +378,13 @@ JsUnitTest.Unit.Logger.prototype._createLogTable = function() {
 };
 
 JsUnitTest.Unit.Logger.prototype.appendActionButtons = function(actions) {
-  // actions = $H(actions);
-  // if (!actions.any()) return;
-  // var div = new Element("div", {className: 'action_buttons'});
-  // actions.inject(div, function(container, action) {
-  //   var button = new Element("input").setValue(action.key).observe("click", action.value);
-  //   button.type = "button";
-  //   return container.insert(button);
-  // });
-  // this.getMessageCell().insert(div);
+  var div = this.getMessageCell().appendChild(document.createElement('div'))
+  div.className = 'action_buttons';
+  for (var i in actions) {
+    if (actions[i] != Object.prototype[i]) { continue; }
+    button = div.appendChild(document.createElement('button'));
+    button.onclick = actions[i];
+  }
 };
 
 JsUnitTest.Unit.Logger.prototype._toHTML = function(txt) {
@@ -561,7 +559,10 @@ JsUnitTest.Unit.Assertions = {
     message = this.buildMessage(message || 'assertNotEqual', 'expected <?>, actual: <?>', expected, actual);
     this.assertBlock(message, function() { return expected != actual });
   },
-
+  assertSameElements: function(expected, actual, message) {
+    message = this.buildMessage(message || 'assertSameElements', 'expected <?> to contain same elements as <?>', expected, actual);
+    this.assertEnumEqual(expected.sort(), actual.sort(), message);
+  },
   assertEnumEqual: function(expected, actual, message) {
     message = this.buildMessage(message || 'assertEnumEqual', 'expected <?>, actual: <?>', expected, actual);
     var expected_array = JsUnitTest.flattenArray(expected);
@@ -865,7 +866,6 @@ JsUnitTest.Unit.Runner.prototype.postResults = function() {
 
 JsUnitTest.Unit.Runner.prototype.runTests = function() {
   var test = this.tests[this.currentTest], actions;
-
   if (!test) return this.finish();
   if (!test.isWaiting) this.logger.start(test.name);
   test.run();
@@ -878,7 +878,6 @@ JsUnitTest.Unit.Runner.prototype.runTests = function() {
     }, test.timeToWait || 1000);
     return;
   }
-
   this.logger.finish(test.status(), test.summary());
   if (actions = test.actions) this.logger.appendActionButtons(actions);
   this.currentTest++;
@@ -926,8 +925,9 @@ JsUnitTest.Unit.Testcase.prototype.wait = function(time, nextPart) {
 
 JsUnitTest.Unit.Testcase.prototype.run = function(rethrow) {
   try {
+    if (console && console.group) { console.group(this.name); }
     try {
-      if (!this.isWaiting) this.setup();
+      if (!this.isWaiting) { this.setup(); }
       this.isWaiting = false;
       this.test();
     } finally {
@@ -935,10 +935,11 @@ JsUnitTest.Unit.Testcase.prototype.run = function(rethrow) {
         this.teardown();
       }
     }
-  }
-  catch(e) {
-    if (rethrow) throw e;
+  } catch(e) {
+    if (rethrow) { throw e; }
     this.error(e, this);
+  } finally {
+    if (console && console.groupEnd) console.groupEnd();
   }
 };
 
@@ -983,6 +984,7 @@ JsUnitTest.Unit.Testcase.prototype.error = function(error, test) {
   this.errors++;
   this.actions['retry with throw'] = function() { test.run(true) };
   this.messages.push(error.name + ": "+ error.message + "(" + JsUnitTest.inspect(error) + ")");
+  console.trace();
 };
 
 JsUnitTest.Unit.Testcase.prototype.status = function() {
@@ -1001,4 +1003,4 @@ JsUnitTest.Unit.Testcase.prototype.benchmark = function(operation, iterations) {
   return timeTaken;
 };
 
-Test = JsUnitTest;
+Test = JsUnitTest
