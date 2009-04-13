@@ -1,8 +1,3 @@
-/*  Lean, version <%= APP_VERSION %>
- *  (c) 2009 FIXME full name
- *
- *  Lean is freely distributable under 
- *  the terms of an MIT-style license.
- *  For details, see the web site: http://NOTE-ENTER-URL.com
- *
- *--------------------------------------------------------------------------*/
+/*  Transmisssion Web Interface, version <%= APP_VERSION %>
+ *  (c) 2009 Duncan Beevers
+ *--------------------------------------------------------*/
