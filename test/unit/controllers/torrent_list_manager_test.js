@@ -1,5 +1,4 @@
 function() { return {
-  // replace this with your real tests
   setup: function() {
     
   },
