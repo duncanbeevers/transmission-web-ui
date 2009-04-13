@@ -7,8 +7,8 @@ browsers:
   # ie: 'c:\Program Files\Internet Explorer\iexplore.exe'
 
   # Mac OS X
-  firefox: '/Applications/Firefox.app/Contents/MacOS/firefox-bin'
-  # safari: '/Applications/Safari.app/Contents/MacOS/Safari'
+  # firefox: '/Applications/Firefox.app/Contents/MacOS/firefox-bin'
+  safari: '/Applications/Safari.app/Contents/MacOS/Safari'
 
   # Unix
   # ?
