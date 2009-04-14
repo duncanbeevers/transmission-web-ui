@@ -19,4 +19,22 @@
           %strong= @object_under_test_file_name
       %div{ :id => @test_log }<
     :javascript
-      new Test.Unit.Runner(#{@function_returning_test_methods}(), { testLog: #{@test_log.to_json} } );
+      (function() {
+        var search = document.location.search,
+            testFilter = (function() {
+              if (search) {
+                var match = search.match(/(\b|\?|&)tests=(.*)(\b|\?\&)/);
+                if (match) {
+                  var tests = match[2].split(/,/);
+                  return function(test) { return tests.include(test.key); }
+                }
+              }
+              return function() { return true; }
+            })();
+        
+        new Test.Unit.Runner($H(#{@function_returning_test_methods}()).
+          filter(testFilter).inject({}, function(a, p) {
+            a[p.key] = p.value;
+            return a;
+        }), { testLog: #{@test_log.to_json} } );
+      })();
