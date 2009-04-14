@@ -1,8 +1,13 @@
 %h1 Spock's Brain
 %form#testRunControls
   .testNameControls
-    %label{ :for => 'testName' } Test name
+    %label{ :for => 'testName' } Test URL
     %input#testName.testName
-  .startTest
-    %button Start
+    %button Add
+%form#testQueueControls
+  %fieldset
+    %legend Test Queue
+    %select#testsQueue{ :size => @tests.size }
+      - @tests.each do |test|
+        %option= test
 %iframe#runnerFrame{ :src => '/test/controllers/torrent_list_manager' }

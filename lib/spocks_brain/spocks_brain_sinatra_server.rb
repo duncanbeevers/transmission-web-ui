@@ -14,7 +14,20 @@ if !(defined?(SRC_ROOT))
   SRC_ROOT = File.join(APP_ROOT, 'src')
 end
 
+def test_url_for_file filename
+  match = /^#{Regexp.escape(TEST_ROOT)}(.*)_test\.js/.match(filename)
+  return unless match
+  '/test' + match[1]
+end
+
+def test_urls
+  Dir[File.join(TEST_ROOT, '**/*_test.js')].map do |f|
+    test_url_for_file(f)
+  end.compact
+end
+
 get '/' do
+  @tests = test_urls
   haml :index
 end
 
