@@ -9,18 +9,19 @@ function() { return {
   },
   
   testGetAllIds: function() {
-    var expected_command = {
+    var expected_command = Object.toJSON({
       method: 'torrent-get',
       arguments: { fields: [ 'id' ] }
-    };
+    });
     
-    jack.expect('Ajax.Request').
-      whereArgument(0).is(Transmission.Remote.URL).
-      whereArgument(1).hasProperty('parameters', expected_command).
-      mock(Prototype.emptyFunction);
+    var transport = new MockXmlHttpRequest();
+    jack.expect('Ajax.getTransport').returnValue(transport);
     
     var remote = new Transmission.Remote();
     remote.requestAllTorrentIds();
+    
+    this.assertEqual(Transmission.Remote.URL, transport.url);
+    this.assertEqual(expected_command, transport.data);
   }
   
 }; }

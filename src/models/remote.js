@@ -7,7 +7,12 @@ Transmission.Remote = (function() {
   var klass = function() {
     return {
       requestAllTorrentIds: function() {
-        
+        new Ajax.Request(Transmission.Remote.URL, {
+          postBody: Object.toJSON({
+            method: 'torrent-get',
+            arguments: { fields: [ 'id' ] }
+          })
+        })
       }
     };
   };
