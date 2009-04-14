@@ -17,6 +17,7 @@ Transmission.Remote = (function() {
     };
   };
   
-  klass.URL = '/transmission/rpc';
   return klass;
 }());
+
+Transmission.Remote.URL = '<%= RPC_URL %>';
