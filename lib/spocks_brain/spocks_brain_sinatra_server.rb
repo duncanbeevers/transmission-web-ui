@@ -27,12 +27,13 @@ get '/test/*' do
   haml :test, :layout => :test_layout
 end
 
-get '/src/*' do
+get '/sprocketize/*' do
   secretary = Sprockets::Secretary.new(
     :asset_root => SRC_ROOT,
     :load_path => [ File.join(SRC_ROOT, '**/*') ],
     :source_files => [ File.join(SRC_ROOT, *params[:splat]) ]
   )
+  
   headers 'Content-Type' => 'application/x-javascript'
   secretary.concatenation.to_s
 end
