@@ -13,7 +13,7 @@ require 'rake/packagetask'
 $:.unshift File.dirname(__FILE__) + "/lib"
 
 APP_VERSION  = '0.0.1'
-APP_NAME     = 'lean'
+APP_NAME     = 'transmission-web-ui'
 RUBYFORGE_PROJECT = APP_NAME
 APP_TEMPLATE = "#{APP_NAME}.js.erb"
 APP_FILE_NAME= "#{APP_NAME}.js"
@@ -33,14 +33,16 @@ task :dist do
   $:.unshift File.join(APP_ROOT, 'lib')
   require 'protodoc'
   require 'fileutils'
+  require 'sprockets'
   FileUtils.mkdir_p APP_DIST_DIR
-
-  Dir.chdir(APP_SRC_DIR) do
-    File.open(File.join(APP_DIST_DIR, APP_FILE_NAME), 'w+') do |dist|
-      dist << Protodoc::Preprocessor.new(APP_TEMPLATE)
-    end
-  end
+  
+  secretary = Sprockets::Secretary.new(
+    :asset_root => APP_DIST_DIR,
+    :load_path => [ File.join(APP_SRC_DIR, '**/*') ],
+    :source_files => [ File.join(APP_SRC_DIR, 'transmission-web-ui.js') ]
+  )
   Dir.chdir(APP_DIST_DIR) do
+    secretary.concatenation.save_to(APP_FILE_NAME)
     FileUtils.copy_file APP_FILE_NAME, "#{APP_NAME}-#{APP_VERSION}.js"
   end
   if File.directory?("website")
