@@ -1,6 +1,34 @@
-#runnerFrame
-  width: 100%
+body
+  background-color: #BAE7A9
+  margin: 0em
+.main
+  min-width: 400px
+  max-width: 900px
+  margin: 0 auto
+  padding: 1em
+  font-family: sans-serif
+  background-color: white
+fieldset
+  padding: 1em
   border: none
-#testQueue .pane
+  margin: 1em 0em
+fieldset .pane
   float: left
   margin-right: 45px
+fieldset #stateName
+  width: 16px
+  height: 16px
+fieldset #stateName.waiting
+  background-image: url('/images/waiting.png')
+fieldset #stateName.running
+  background-image: url('/images/running.png')
+#testsQueue
+  width: 300px
+#runnerFrame
+  width: 100%
+  height: 800px
+  border: none
+button
+  font-size: 0.9em
+h1
+  margin: 0em

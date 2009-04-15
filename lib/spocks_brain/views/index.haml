@@ -1,14 +1,15 @@
-%h1 Spock's Brain
-%fieldset#testQueue
-  %legend Test Queue
-  .queue.pane
-    %select#testsQueue{ :size => 5 }
-  .status.pane
-    %div Running
-  .manual.pane
-    %form#testRunControls
-      .testNameControls
-        %label{ :for => 'testName' } Test URL
-        %input#testName.testName
-        %button Add
-%iframe#runnerFrame
+.main
+  %h1 Spock's Brain
+  %fieldset#testQueue
+    %legend Test Queue
+    .status.pane
+      #stateName
+    .queue.pane
+      %select#testsQueue{ :size => 5 }
+    .manual.pane
+      %form#testRunControls
+        .testNameControls
+          %label{ :for => 'testName' } Test URL
+          %input#testName.testName
+          %button Add
+  %iframe#runnerFrame
