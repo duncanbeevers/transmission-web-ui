@@ -7,39 +7,28 @@ namespace :test do
       require 'rubygems'
       gem 'activesupport'
       require 'active_support'
-
+      require 'rest_client'
+      
       since = TEST_CHANGES_SINCE
-      touched = FileList[
-        'test/unit/*_test.html', 
-        'src/*.js'].select { |path| File.mtime(path) > since }
+      
+      touched = FileList[ 'test/unit/**/*_test.*', 'src/**/*.js' ].select do |path|
+        File.mtime(path) > since
+      end.map do |filename|
+        match = /^test\/unit\/(.*)_test\.js$/.match(filename)
+        next filename unless match
+        'src/' + match[1] + '.js'
+      end.uniq.map do |filename|
+        match = /^src\/(.*).js$/.match(filename)
+        next filename unless match # This shouldn't really happen
+        match[1]
+      end
+      
       next if touched.blank?
       
-      gem 'newjs'
-      require 'newjs'
-      require 'newjs/autotest'
-      
-      touched.each do |file|
-        if file =~ /\/([^\/]+)\.js$/
-          file = "test/unit/#{$1}_test.html"
-        end
-        file = "#{APP_ROOT}/#{file}"
-        unless File.exists?(file)
-          # puts "Notice: Test file does not exist: #{file}"
-          next
-        end
-        puts "Launching test: #{file}"
-        browsers = JavascriptTestAutotest::Config.get :browsers
-        if browsers.blank?
-          puts "WARNING: No browsers setup in config/javascript_test_autotest.yml"
-          next
-        end
-        browsers.each_pair do |name, path|
-          browser = JavascriptTestAutotest::Browser.browser(name, path)
-          browser.setup
-          browser.visit(file)
-          browser.teardown          
-        end
+      touched.each do |url|
+        RestClient.post 'http://localhost:4567/work', :url => '/test' + url
       end
+      
     end
   end
 end
