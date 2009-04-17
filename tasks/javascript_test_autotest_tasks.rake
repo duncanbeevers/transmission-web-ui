@@ -26,7 +26,7 @@ namespace :test do
       next if touched.blank?
       
       touched.each do |url|
-        RestClient.post 'http://localhost:4567/work', :url => '/test' + url
+        RestClient.post 'http://localhost:4567/work', :url => '/test/' + url
       end
       
     end
