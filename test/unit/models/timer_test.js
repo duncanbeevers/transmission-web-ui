@@ -8,14 +8,14 @@ function() { return {
   },
   
   testInterval: function() {
-    var timer = new Timer(Prototype.emptyFunction, 1000);
+    var timer = new Transmission.Timer(Prototype.emptyFunction, 1000);
     
     this.assertEqual(1000, timer.interval());
   },
   
   testShouldNotInvokeFunctionOnInstantiation: function() {
     var invocations_count = 0,
-        timer = new Timer(function() {
+        timer = new Transmission.Timer(function() {
           invocations_count += 1;
         }, 1000);
     this.assertEqual(0, invocations_count);
@@ -23,7 +23,7 @@ function() { return {
   
   testShouldInvokeFunctionOnStart: function() {
     var invocations_count = 0,
-        timer = new Timer(function() {
+        timer = new Transmission.Timer(function() {
           invocations_count += 1;
         }, 1000);
     timer.start();
@@ -35,7 +35,7 @@ function() { return {
     var invocations_count = 0,
         interval = 100,
         expected_invocations_count = 4,
-        timer = new Timer(function() {
+        timer = new Transmission.Timer(function() {
           invocations_count += 1;
         }, interval);
     timer.start();
@@ -51,7 +51,7 @@ function() { return {
     var invocations_count = 0,
         interval = 100,
         expected_invocations_count = 4,
-        timer = new Timer(function() {
+        timer = new Transmission.Timer(function() {
           invocations_count += 1;
         }, interval);
     timer.start();
