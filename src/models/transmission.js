@@ -1,14 +1,6 @@
-//= require <prototype>
-
-/* Transmission establishes a top-level namespace for all application objects
-    in order to isolate them from external libraries.
+/*
+  Transmission Web Interface <%= APP_VERSION %>
 */
-Transmission = (function() { return function() {
-  var torrents = [];
-  
-  return {
-    getTorrents: function() {
-      return torrents;
-    }
-  };
-}; }());
+
+//= require <transmission>
+Transmission.Version = '<%= APP_VERSION %>';
