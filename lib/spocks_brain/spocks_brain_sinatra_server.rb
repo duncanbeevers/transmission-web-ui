@@ -1,8 +1,11 @@
 require 'rubygems'
 require 'sinatra'
-require 'sprockets'
 require 'ruby-debug'
 require 'json'
+
+$:.push(File.dirname(__FILE__)) unless $:.include?(File.dirname(__FILE__))
+require 'sprocketizing_server'
+use SprocketizingServer
 
 class DateTime
   def to_json
@@ -69,36 +72,8 @@ get '/work' do
   work_items.to_json
 end
 
-get '/sprocketize/*' do
-  headers 'Content-Type' => 'application/x-javascript'
-  secretary(params[:splat]).concatenation.to_s
-end
-
 # SASS stylesheet
 get '/stylesheets/style.css' do
   headers 'Content-Type' => 'text/css; charset=utf-8'
   sass :style
-end
-
-
-# Helper methods
-def test_url_for_file filename
-  match = /^#{Regexp.escape(TEST_ROOT)}(.*)_test\.js/.match(filename)
-  return unless match
-  '/test' + match[1]
-end
-
-def test_urls
-  Dir[File.join(TEST_ROOT, '**/*_test.js')].map do |f|
-    test_url_for_file(f)
-  end.compact
-end
-
-def secretary source_files
-  Sprockets::Secretary.new(
-    :root => SRC_ROOT,
-    :asset_root => SRC_ROOT,
-    :load_path => [ File.join(SRC_ROOT, '**/*') ],
-    :source_files => [ File.join(SRC_ROOT, *source_files) ]
-  )
 end
