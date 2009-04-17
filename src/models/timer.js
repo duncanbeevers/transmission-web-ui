@@ -16,7 +16,7 @@ Timer = (function() { return function(fn, initialInterval) {
       timer = setInterval(work, interval);
     },
     stop: function() {
-      
+      if (timer) { clearInterval(timer); }
     }
   };
 }; }());

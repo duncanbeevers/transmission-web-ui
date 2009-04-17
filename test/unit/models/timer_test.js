@@ -33,7 +33,7 @@ function() { return {
   
   testRepeat: function() {
     var invocations_count = 0,
-        interval                   = 50,
+        interval = 100,
         expected_invocations_count = 4,
         timer = new Timer(function() {
           invocations_count += 1;
@@ -44,6 +44,24 @@ function() { return {
       function() {
         timer.stop();
         this.assertEqual(expected_invocations_count, invocations_count);
+      });
+  },
+  
+  testStop: function() {
+    var invocations_count = 0,
+        interval = 100,
+        expected_invocations_count = 4,
+        timer = new Timer(function() {
+          invocations_count += 1;
+        }, interval);
+    timer.start();
+    
+    this.wait(interval * expected_invocations_count - interval / 2,
+      function() {
+        timer.stop();
+        this.wait(interval, function() {
+          this.assertEqual(expected_invocations_count, invocations_count);
+        });
       });
   }
   
