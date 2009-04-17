@@ -40,7 +40,7 @@ task :dist do
     :root => APP_SRC_DIR,
     :asset_root => APP_DIST_DIR,
     :load_path => [ File.join(APP_SRC_DIR, '**/*') ],
-    :source_files => [ File.join(APP_SRC_DIR, 'transmission-web-ui.js') ]
+    :source_files => [ File.join(APP_SRC_DIR, 'controllers/web_ui.js') ]
   )
   Dir.chdir(APP_DIST_DIR) do
     secretary.concatenation.save_to(APP_FILE_NAME)
