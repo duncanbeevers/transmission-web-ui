@@ -19,3 +19,4 @@ Launch the test server
 * mockxmlhttprequest lifted from jsunit
 * Preprocessing implemented with [sprockets](http://www.getsprockets.org)
 * Icons from [fugue](http://www.pinvoke.com/)
+* Gauge.js http://www.netzgesta.de/gauge/
