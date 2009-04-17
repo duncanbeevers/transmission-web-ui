@@ -4,11 +4,18 @@
    A Timer's interval is specified in milliseconds instead of seconds
 */
 Timer = (function() { return function(fn, initialInterval) {
-  var interval = initialInterval;
+  var work     = fn,
+      interval = initialInterval;
   
   return {
     interval: function() {
       return interval;
+    },
+    start: function() {
+      work();
+    },
+    stop: function() {
+      
     }
   };
 }; }());
