@@ -17,10 +17,6 @@ class WorkServer < Sinatra::Default
     property :ts, Integer
   end
 
-  if !(defined?(SPOCK_ROOT))
-    SPOCK_ROOT = File.expand_path(File.join(File.dirname(__FILE__), '..'))
-  end
-
   # An in-memory Sqlite3 connection:
   DataMapper.setup(:default, "sqlite3::memory:")
   DataMapper.auto_upgrade!

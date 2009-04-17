@@ -6,9 +6,6 @@ class SprocketizingServer < Sinatra::Default
   if !(defined?(APP_ROOT))
     APP_ROOT = File.expand_path(File.join(File.dirname(__FILE__), '../..'))
   end
-  if !(defined?(TEST_ROOT))
-    TEST_ROOT = File.join(APP_ROOT, 'test/unit')
-  end
   if !(defined?(SRC_ROOT))
     SRC_ROOT = File.join(APP_ROOT, 'src')
   end
