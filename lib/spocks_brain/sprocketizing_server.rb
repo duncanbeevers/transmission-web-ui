@@ -3,25 +3,22 @@ require 'sinatra'
 require 'sprockets'
 
 class SprocketizingServer < Sinatra::Default
+  if !(defined?(APP_ROOT))
+    APP_ROOT = File.expand_path(File.join(File.dirname(__FILE__), '../..'))
+  end
+  if !(defined?(TEST_ROOT))
+    TEST_ROOT = File.join(APP_ROOT, 'test/unit')
+  end
+  if !(defined?(SRC_ROOT))
+    SRC_ROOT = File.join(APP_ROOT, 'src')
+  end
+  
   # Routes
   get '/sprocketize/*' do
     headers 'Content-Type' => 'application/x-javascript'
     secretary(params[:splat]).concatenation.to_s
   end
-
-  # Helper methods
-  def test_url_for_file filename
-    match = /^#{Regexp.escape(TEST_ROOT)}(.*)_test\.js/.match(filename)
-    return unless match
-    '/test' + match[1]
-  end
-
-  def test_urls
-    Dir[File.join(TEST_ROOT, '**/*_test.js')].map do |f|
-      test_url_for_file(f)
-    end.compact
-  end
-
+  
   def secretary source_files
     Sprockets::Secretary.new(
       :root => SRC_ROOT,
