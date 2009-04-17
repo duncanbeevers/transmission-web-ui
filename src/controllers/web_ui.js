@@ -1,9 +1,9 @@
-//= require <prototype>
+//= require <transmission>
 
-/* Transmission establishes a top-level namespace for all application objects
-    in order to isolate them from external libraries.
+/* The WebUI is the application ojbect responsible for instantiating
+    and coordinating other view components.
 */
-Transmission = (function() { return function() {
+Transmission.WebUI = (function() { return function() {
   var torrents = [];
   
   return {

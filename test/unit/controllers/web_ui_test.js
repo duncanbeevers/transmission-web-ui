@@ -8,8 +8,8 @@ function() { return {
   },
   
   testGetTorrents: function() {
-    var transmission = new Transmission();
-    this.assertEnumEqual([ ], transmission.getTorrents());
+    var ui = new Transmission.WebUI();
+    this.assertEnumEqual([ ], ui.getTorrents());
   }
   
 }; }
