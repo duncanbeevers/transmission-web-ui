@@ -5,14 +5,15 @@
 */
 Timer = (function() { return function(fn, initialInterval) {
   var work     = fn,
-      interval = initialInterval;
-  
+      interval = initialInterval,
+      timer;
   return {
     interval: function() {
       return interval;
     },
     start: function() {
       work();
+      timer = setInterval(work, interval);
     },
     stop: function() {
       
