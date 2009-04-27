@@ -13,7 +13,7 @@ Transmission.EventDispatcher = (function() {
   
   return {
     dispatchEvent: function(event) {
-      (callbacks[event.getType()] || []).forEach(function(callback) {
+      (callbacks[event.getType()] || []).each(function(callback) {
         callback(event);
       });
     },

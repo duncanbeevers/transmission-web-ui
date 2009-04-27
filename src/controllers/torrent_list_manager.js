@@ -7,7 +7,7 @@
   what torrents the web ui is tracking.
 **/
 Transmission.TorrentListEvent = Transmission.Events(
-  'TorrentAdded'
+  'TorrentAdded', 'TorrentRemoved'
 );
 
 Transmission.TorrentListManager = (function() { return function() {
@@ -28,6 +28,12 @@ Transmission.TorrentListManager = (function() { return function() {
   };
   
   var removeIds = function(ids_to_remove) {
+    var tlm = this;
+    ids_to_remove.each(function(id) {
+      tlm.dispatchEvent(
+        new Transmission.TorrentListEvent.TorrentRemoved( { torrent: torrents[id] } )
+      )
+    });
     ids = ids.filter(function(id) {
       return !ids_to_remove.include(id);
     });

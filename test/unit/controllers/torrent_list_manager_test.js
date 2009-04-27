@@ -42,6 +42,20 @@ function() { return {
     
     tlm.addIds([ 1 ]);
     this.assertEqual(1, torrent_added.getId());
+  },
+  
+  testOnTorrentRemoved: function() {
+    var torrent_removed;
+    var tlm = new Transmission.TorrentListManager();
+    
+    tlm.addEventListener(Transmission.TorrentListEvent.TorrentRemoved,
+      function(event) {
+        torrent_removed = event.getData().torrent;
+      });
+    
+    tlm.addIds([ 1 ]);
+    tlm.removeIds([ 1 ]);
+    this.assertEqual(1, torrent_removed.getId());
   }
   
 }; }
