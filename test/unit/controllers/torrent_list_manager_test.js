@@ -29,6 +29,19 @@ function() { return {
     tlm.addIds([ 1 ]);
     var all_torrent_ids = [ 1, 2 ];
     this.assertSameElements([ 2 ], tlm.newIdsInList(all_torrent_ids));
+  },
+  
+  testOnTorrentAdded: function() {
+    var torrent_added;
+    var tlm = new Transmission.TorrentListManager();
+    
+    tlm.addEventListener(Transmission.TorrentEvent.TorrentAdded,
+      function(event) {
+        torrent_added = event.getData().torrent;
+      });
+    
+    tlm.addIds([ 1 ]);
+    this.assertEqual(1, torrent_added.getId());
   }
   
 }; }
