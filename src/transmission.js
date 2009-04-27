@@ -5,3 +5,5 @@
 */
 Transmission = { Version: '%<= APP_VERSION %>' };
 Transmission.Version = '<%= APP_VERSION %>';
+
+//= require "util/extend"
