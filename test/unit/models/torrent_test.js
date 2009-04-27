@@ -8,8 +8,9 @@ function() { return {
     
   },
   
-  testTruth: function() {
-    assert(true);
+  testGetId: function() {
+    var torrent = new Transmission.Torrent(1);
+    this.assertEqual(1, torrent.getId());
   }
   
 }; }
