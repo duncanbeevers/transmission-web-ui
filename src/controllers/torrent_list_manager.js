@@ -2,10 +2,14 @@
 //= require <events>
 //= require <torrent>
 
-/* Transmission TorrentListManager establishes a top-level
-    namespace for all application objects
-    in order to isolate them from external libraries.
-*/
+/**
+  The TorrentListManager is the canonical source for
+  what torrents the web ui is tracking.
+**/
+Transmission.TorrentListEvent = Transmission.Events(
+  'TorrentAdded'
+);
+
 Transmission.TorrentListManager = (function() { return function() {
   var ids = [],
       torrents = {};
@@ -17,7 +21,7 @@ Transmission.TorrentListManager = (function() { return function() {
     ids_to_add.each(function(id) {
       torrents[id] = new Transmission.Torrent(id);
       tlm.dispatchEvent(
-        new Transmission.TorrentEvent.TorrentAdded( { torrent: torrents[id] } )
+        new Transmission.TorrentListEvent.TorrentAdded( { torrent: torrents[id] } )
       );
     });
     ids = ids.concat(ids_to_add);

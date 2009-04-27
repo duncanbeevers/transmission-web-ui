@@ -8,7 +8,3 @@ Transmission.Torrent = (function() { return function(id) {
     }
   };
 }; }());
-
-Transmission.TorrentEvent = Transmission.Events(
-  'TorrentAdded'
-);

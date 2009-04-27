@@ -35,7 +35,7 @@ function() { return {
     var torrent_added;
     var tlm = new Transmission.TorrentListManager();
     
-    tlm.addEventListener(Transmission.TorrentEvent.TorrentAdded,
+    tlm.addEventListener(Transmission.TorrentListEvent.TorrentAdded,
       function(event) {
         torrent_added = event.getData().torrent;
       });
