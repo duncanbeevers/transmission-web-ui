@@ -115,11 +115,21 @@ JavaScriptTestTask.new(:test_functionals, 4712) do |t|
   end
 end
 
-
 task :clean_package_source do
   rm_rf File.join(APP_PKG_DIR, "#{APP_NAME}-#{APP_VERSION}")
 end
 
-Dir['tasks/**/*.rake'].each { |rake| load rake }
 
+task :compress_script_loader do
+  root = File.dirname(__FILE__)
+  src = File.join(root, 'src/lib/script_loader.js')
+  jar = File.join(root, 'vendor/yuicompressor-2.4.2.jar')
+  out = File.join(root, 'public/sl.js')
+  
+  system('java', '-jar', jar, '--type', 'js', '-o', out, src)
+end
+
+
+
+Dir['tasks/**/*.rake'].each { |rake| load rake }
 end
