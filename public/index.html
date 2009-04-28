@@ -8,12 +8,13 @@ ScriptLoader=(function(){var m=document.location.protocol+"://"+document.locatio
 var ui, transmission_src = 'transmission-web-ui.js';
 
 ScriptLoader.loadScript(transmission_src, function() {
-  ui = new Transmission.WebUI();
+  ui = new Transmission.WebUI(new Transmission.Remote());
 });
 
     </script>
   </head>
   <body>
+
     <script type="text/javascript">
 
 ScriptLoader.observe(transmission_src, function() {
