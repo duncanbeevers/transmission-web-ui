@@ -8,7 +8,6 @@ rescue LoadError
 end
 require 'rake'
 require 'rake/clean'
-require 'rake/packagetask'
 
 $:.unshift File.dirname(__FILE__) + "/lib"
 
@@ -46,28 +45,14 @@ task :dist do
     secretary.concatenation.save_to(APP_FILE_NAME)
     FileUtils.copy_file APP_FILE_NAME, "#{APP_NAME}-#{APP_VERSION}.js"
   end
+  FileUtils.copy_file "dist/#{APP_FILE_NAME}", "public/#{APP_FILE_NAME}"
   if File.directory?("website")
     FileUtils.mkdir_p "website/dist"
     FileUtils.copy_file "dist/#{APP_FILE_NAME}",       "website/dist/#{APP_FILE_NAME}"
     FileUtils.copy_file "dist/#{APP_FILE_NAME}",       "website/dist/#{APP_NAME}-#{APP_VERSION}.js"
   end
 end
-
-Rake::PackageTask.new(APP_NAME, APP_VERSION) do |package|
-  package.need_tar_gz = true
-  package.package_dir = APP_PKG_DIR
-  package.package_files.include(
-    '[A-Z]*',
-    'config/*.sample',
-    "dist/#{APP_FILE_NAME}",
-    'lib/**',
-    'src/**',
-    'script/**',
-    'tasks/**',
-    'test/**',
-    'website/**'
-  )
-end
+task :dist => :compress_script_loader
 
 desc "Builds the distribution, runs the JavaScript unit + functional tests and collects their results."
 task :test => [:dist, :test_units, :test_functionals]
