@@ -11,6 +11,12 @@ function() { return {
     this.assertEnumEqual([ ], tlm.getIds());
   },
   
+  testGetTorrent: function() {
+    var tlm = new Transmission.TorrentListManager();
+    tlm.addIds([ 1 ]);
+    this.assertEqual(1, tlm.getTorrent(1).getId());
+  },
+  
   testAddIds: function() {
     var tlm = new Transmission.TorrentListManager();
     tlm.addIds([ 1 ]);

@@ -15,6 +15,7 @@ Transmission.TorrentListManager = (function() { return function() {
       torrents = {};
   
   var getIds = function() { return ids; };
+  var getTorrent = function(id) { return torrents[id]; };
   
   var addIds = function(ids_to_add) {
     var tlm = this;
@@ -48,6 +49,7 @@ Transmission.TorrentListManager = (function() { return function() {
   
   return Transmission.extend(Transmission.EventDispatcher, {
     getIds: getIds,
+    getTorrent: getTorrent,
     addIds: addIds,
     removeIds: removeIds,
     newIdsInList: newIdsInList
