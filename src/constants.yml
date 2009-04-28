@@ -1,2 +1,4 @@
 APP_VERSION: 0.2
 RPC_URL: /transmission/rpc
+
+TORRENT_IDS_POLL_INTERVAL: 10000
