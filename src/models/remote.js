@@ -3,22 +3,31 @@
 /* Trasmission.Remote is responsible for transmitting messages to the rpc server
     and ferrying the responses back to interested parties.
 */
-Transmission.Remote = (function() {
-  var klass = function() {
-    return {
-      requestAllTorrentIds: function(callback) {
-        new Ajax.Request(Transmission.Remote.URL, {
-          postBody: Object.toJSON({
-            method: 'torrent-get',
-            arguments: { fields: [ 'id' ] }
-          }),
-          onSuccess: function(response) { callback(); }
-        })
+Transmission.Remote = (function() { return function() {
+  var rpc = function(data, callback) {
+    new Ajax.Request(Transmission.Remote.URL, {
+      postBody: Object.toJSON(data),
+      onSuccess: function(response) {
+        var json = response.responseJSON;
+        if ('success' === json.result) {
+          callback(json.arguments);
+        }
       }
-    };
+    });
   };
   
-  return klass;
-}());
+  var requestAllTorrentIds = function(callback) {
+    rpc({
+      method: 'torrent-get',
+      arguments: { fields: [ 'id' ] }
+    }, function(args) {
+      callback(args.torrents.pluck('id'));
+    });
+  };
+  
+  return {
+    requestAllTorrentIds: requestAllTorrentIds
+  };
+}; }());
 
 Transmission.Remote.URL = '<%= RPC_URL %>';
