@@ -1,18 +1,15 @@
 var MockRemote = (function() { return function() {
+  var all_ids_requested = false;
   var requestAllTorrentIds = function(callback) {
-    callback.defer(0, torrent_ids);
+    all_ids_requested = true;
   };
-  
-  var torrent_ids = [];
-  var setAllTorrentIds = function(ids) {
-    torrent_ids = ids;
-  }
+  var haveAllIdsBeenRequested = function() { return all_ids_requested; }
   
   return {
     // Transmission.Remote methods
     requestAllTorrentIds: requestAllTorrentIds,
     
     // Mock instrumentation methods
-    setAllTorrentIds: setAllTorrentIds
+    haveAllIdsBeenRequested: haveAllIdsBeenRequested
   };
 }; })();
