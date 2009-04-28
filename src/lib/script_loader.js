@@ -11,15 +11,17 @@ ScriptLoader = (function() {
       };
   
   var loadScript = function(url, callback) {
-    loadScriptDomElement(url, callback);
+    loadScriptDomElement(url, observerNotifyingCallback(callback));
   };
   var loadScripts = function(urls, callback) {
     var strategy = getBestLoadStrategy(urls);
     
-    // Load all but the last url without callbacks
+    // Load all but the last url without the final callback
     for (var i = 0, len = urls.length; i < len - 1; i++) {
       strategy(urls[i], null, true);
     }
+    
+    // Load the last url with the final callback
     strategy(urls[urls.length - 1], callback, true);
   };
   
@@ -38,11 +40,29 @@ ScriptLoader = (function() {
     return true;
   };
   
+  var observer_notified_scripts = {};
+  var observers = {};
+  var observerNotifyingCallback = function(callback) {
+    return function(url) {
+      callback.apply(this, arguments);
+      
+      observer_notified_scripts[url] = true;
+      
+      if (!observers[url]) { return; }
+      for (var i = observers[url].length - 1; i >= 0; i--) {
+        observers[url][i]();
+      }
+    };
+  }
   var getBestLoadStrategy = function(urls) {
+    return observerNotifyingCallback(getBrowserSpecificLoadStrategy(urls));
+  };
+  
+  var getBrowserSpecificLoadStrategy = function(urls) {
     if (areAllSameDomain(urls)) { return loadScriptXhrInjection; }
     if (browser.Opera || browser.Firefox) { return loadScriptDomElement; }
     return loadScriptDocWrite;
-  };
+  }
   
   var Ajax = function(url, callback) {
     var transports = [
@@ -73,41 +93,38 @@ ScriptLoader = (function() {
   var loadScriptDomElement = function(url, callback) {
     var domscript = document.createElement('script');
     domscript.src = url;
-    if (callback) {
-      domscript.onloadDone = false;
-      domscript.onload = function() { 
-        domscript.onloadDone = true; 
-        callback(); 
-      };
-      domscript.onreadystatechange = function() {
-        if (!domscript.onloadDone && "loaded" === domscript.readyState) {
-          domscript.onloadDone = true;
-          domscript.onload();
-        }
-      };
-    }
+    domscript.onloadDone = false;
+    domscript.onload = function() {
+      domscript.onloadDone = true;
+      callback(url);
+    };
+    domscript.onreadystatechange = function() {
+      if (!domscript.onloadDone && 'loaded' === domscript.readyState) {
+        domscript.onloadDone = true;
+        domscript.onload();
+      }
+    };
     document.getElementsByTagName('head')[0].appendChild(domscript);
   };
   
   var loadScriptDocWrite = function(url, callback) {
     var dom_loaded_sigil = '__EFWSonDOMContentLoaded';
     document.write('<scr' + 'ipt src="' + url + '" type="text/javascript"></scr' + 'ipt>');
-    if (callback) {
-      // we can't tie it to the script's onload, so use Prototype's dom:loaded
-      document.write('<script id=' + dom_loaded_sigil + ' defer src=//:><\/script>');
-      document.getElementById(dom_loaded_sigil).onreadystatechange = function() {
-        if ('complete' !== this.readyState) { return; }
-        this.onreadystatechange = null;
-        callback();
-      };
-    }
+    
+    // we can't tie it to the script's onload, so use Prototype's dom:loaded
+    document.write('<script id=' + dom_loaded_sigil + ' defer src=//:><\/script>');
+    document.getElementById(dom_loaded_sigil).onreadystatechange = function() {
+      if ('complete' !== this.readyState) { return; }
+      this.onreadystatechange = null;
+      callback(url);
+    };
   };
   
   var queued_scripts = [];
   var loadScriptXhrInjection = function(url, callback, preserve_order) {
     var queue_entry;
     if (preserve_order) {
-      queue_entry = { response: null, callback: callback, done: false };
+      queue_entry = { url: url, response: null, callback: callback, done: false };
       queued_scripts.push(queue_entry);
     }
     
@@ -120,7 +137,7 @@ ScriptLoader = (function() {
         document.getElementsByTagName('head')[0].appendChild(se);
         se.text = transport.responseText;
         
-        if (callback) { callback(); }
+        callback(url);
       }
     });
   };
@@ -135,14 +152,24 @@ ScriptLoader = (function() {
       document_head.appendChild(se);
       se.text = qScript.response;
       
-      if (script.callback ) { script.callback(); }
+      script.callback(script.url);
       script.done = true;
     }
   };
   
+  var observe = function(url, callback) {
+    if (!observers[url]) { observers[url] = []; }
+    
+    if (observer_notified_scripts[url]) {
+      callback(url);
+    } else {
+      observers[url].push(callback);
+    }
+  }
   
   return {
     loadScript: loadScript,
-    loadScripts: loadScripts
+    loadScripts: loadScripts,
+    observe: observe
   };
 })();
