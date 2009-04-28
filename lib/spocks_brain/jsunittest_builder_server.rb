@@ -8,6 +8,10 @@ class JsUnitTestBuilderServer < Sinatra::Default
   if !(defined?(TEST_ROOT))
     TEST_ROOT = File.join(APP_ROOT, 'test/unit')
   end
+  if !(defined?(TEST_LIB))
+    TEST_LIB = File.join(APP_ROOT, 'test/lib')
+  end
+  set :public, TEST_LIB
   
   get '/test/*' do
     @object_under_test = params[:splat]
