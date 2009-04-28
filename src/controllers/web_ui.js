@@ -9,6 +9,10 @@ Transmission.WebUI = (function() { return function() {
   return {
     getTorrents: function() {
       return torrents;
+    },
+    
+    markupReady: function() {
+      
     }
   };
 }; }());
