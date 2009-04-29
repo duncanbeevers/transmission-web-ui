@@ -1,6 +1,6 @@
 var MockRemote = (function() { return function() {
   var all_ids_requested = false;
-  var requestAllTorrentIds = function(callback) {
+  var requestAllTorrentIds = function() {
     all_ids_requested = true;
   };
   var haveAllIdsBeenRequested = function() { return all_ids_requested; }
