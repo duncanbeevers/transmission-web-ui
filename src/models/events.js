@@ -14,7 +14,7 @@ Transmission.EventDispatcher = (function() {
   return {
     dispatchEvent: function(event) {
       (callbacks[event.getType()] || []).each(function(callback) {
-        callback(event);
+        callback.defer(event);
       });
     },
     addEventListener: function(event_type, callback) {
