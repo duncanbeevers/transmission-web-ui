@@ -15,6 +15,8 @@ function MockXmlHttpRequest() {
     this.requestHeaderNamesToValues = {};
     this._serverResponseSet = false;
     this._serverResponseBody = undefined;
+    this._serverResponseHeaders = {};
+    this._serverResponseStatus = 200;
 }
 
 /**
@@ -43,8 +45,8 @@ MockXmlHttpRequest.prototype.send = function(data) {
     
     if (this._serverResponseSet) {
         this.readyState = 4;
-        this.status = 200;
-        this.responseText = this._responseBody;
+        this.status = this._serverResponseStatus;
+        this.responseText = this._serverResponseBody;
         this.onreadystatechange();
     }
 };
@@ -58,10 +60,35 @@ MockXmlHttpRequest.prototype.setRequestHeader = function(label, value) {
     this.requestHeaderNamesToValues[label] = value;
 };
 
+/** Implements getResponseHeader by returning mock values stored before-hand by the tester
+  @param name
+**/
+MockXmlHttpRequest.prototype.getResponseHeader = function(name) {
+  if (this.sendCalled) {
+    return this._serverResponseHeaders[name];
+  }
+};
 
-MockXmlHttpRequest.prototype.serverResponds = function(responseBody) {
+
+
+// Methods for priming mock
+MockXmlHttpRequest.prototype.serverResponds = function(responseBody, responseStatus) {
+    if (undefined === responseStatus) { responseStatus = 200; }
     this._serverResponseSet = true;
     // Sets response body to be returned when send is invoked
     this._serverResponseBody = responseBody;
+    this._serverResponseStatus = responseStatus;
     return this;
+};
+
+MockXmlHttpRequest.prototype.serverRespondsJSON = function(responseBody, responseStatus) {
+    if (undefined === responseStatus) { responseStatus = 200; }
+    this.serverResponseHeader('Content-type', 'application/json');
+    this.serverResponds(Object.toJSON(responseBody), responseStatus);
+    return this;
+};
+
+MockXmlHttpRequest.prototype.serverResponseHeader = function(name, value) {
+  this._serverResponseHeaders[name] = value;
+  return this;
 };
