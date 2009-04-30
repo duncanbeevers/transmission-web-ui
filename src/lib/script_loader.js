@@ -18,11 +18,11 @@ ScriptLoader = (function() {
     
     // Load all but the last url without the final callback
     for (var i = 0, len = urls.length; i < len - 1; i++) {
-      strategy(urls[i], observerNotifyingCallback(), true);
+      strategy(urls[i], observerNotifyingCallback());
     }
     
     // Load the last url with the final callback
-    strategy(urls[urls.length - 1], observerNotifyingCallback(callback), true);
+    strategy(urls[urls.length - 1], observerNotifyingCallback(callback));
   };
   
   
@@ -62,7 +62,7 @@ ScriptLoader = (function() {
     if (areAllSameDomain(urls)) { return loadScriptXhrInjection; }
     if (browser.Opera || browser.Firefox) { return loadScriptDomElement; }
     return loadScriptDocWrite;
-  }
+  };
   
   var xhr = function(url, callback) {
     var transports = [
