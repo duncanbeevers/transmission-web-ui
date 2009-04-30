@@ -108,7 +108,7 @@ ScriptLoader = (function() {
   };
   
   var loadScriptDocWrite = function(url, callback) {
-    var dom_loaded_sigil = '__EFWSonDOMContentLoaded';
+    var dom_loaded_sigil = '__' + url + 'onDOMContentLoaded';
     document.write('<scr' + 'ipt src="' + url + '" type="text/javascript"></scr' + 'ipt>');
     
     // we can't tie it to the script's onload, so use Prototype's dom:loaded
@@ -123,7 +123,8 @@ ScriptLoader = (function() {
   var queued_scripts = [];
   var loadScriptXhrInjection = function(url, callback) {
     var queue_entry;
-    queue_entry = { url: url, response: null, callback: callback, cb: uneval(callback), loaded: false, injected: false };
+    queue_entry = { loaded: false, injected: false, response: null,
+      url: url, callback: callback };
     queued_scripts.push(queue_entry);
     
     xhr(url, function(transport) {
