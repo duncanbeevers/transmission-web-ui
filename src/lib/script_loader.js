@@ -18,11 +18,11 @@ ScriptLoader = (function() {
     
     // Load all but the last url without the final callback
     for (var i = 0, len = urls.length; i < len - 1; i++) {
-      strategy(urls[i], null, true);
+      strategy(urls[i], observerNotifyingCallback(), true);
     }
     
     // Load the last url with the final callback
-    strategy(urls[urls.length - 1], callback, true);
+    strategy(urls[urls.length - 1], observerNotifyingCallback(callback), true);
   };
   
   
@@ -44,7 +44,7 @@ ScriptLoader = (function() {
   var observers = {};
   var observerNotifyingCallback = function(callback) {
     return function(url) {
-      callback.apply(this, arguments);
+      if (callback) { callback.apply(this, arguments) };
       
       observer_notified_scripts[url] = true;
       
@@ -55,7 +55,7 @@ ScriptLoader = (function() {
     };
   }
   var getBestLoadStrategy = function(urls) {
-    return observerNotifyingCallback(getBrowserSpecificLoadStrategy(urls));
+    return getBrowserSpecificLoadStrategy(urls);
   };
   
   var getBrowserSpecificLoadStrategy = function(urls) {
@@ -64,7 +64,7 @@ ScriptLoader = (function() {
     return loadScriptDocWrite;
   }
   
-  var Ajax = function(url, callback) {
+  var xhr = function(url, callback) {
     var transports = [
           function() { return new ActiveXObject('Microsoft.XMLHTTP'); },
           function() { return new ActiveXObject('Msxml2.XMLHTTP'); },
@@ -72,7 +72,7 @@ ScriptLoader = (function() {
         ], transport;
     
     for (var i = transports.length - 1; i >= 0; i--) {
-      try { xhrObj = transports[i](); }
+      try { transport = transports[i](); }
       catch(_) { continue; }
       break;
     }
@@ -121,39 +121,30 @@ ScriptLoader = (function() {
   };
   
   var queued_scripts = [];
-  var loadScriptXhrInjection = function(url, callback, preserve_order) {
+  var loadScriptXhrInjection = function(url, callback) {
     var queue_entry;
-    if (preserve_order) {
-      queue_entry = { url: url, response: null, callback: callback, done: false };
-      queued_scripts.push(queue_entry);
-    }
+    queue_entry = { url: url, response: null, callback: callback, cb: uneval(callback), loaded: false, injected: false };
+    queued_scripts.push(queue_entry);
     
-    Ajax(url, function(transport) {
-      if (preserve_order) {
-        queue_entry.response = transport.responseText;
-        injectScripts();
-      } else {
-        var se = document.createElement('script');
-        document.getElementsByTagName('head')[0].appendChild(se);
-        se.text = transport.responseText;
-        
-        callback(url);
-      }
+    xhr(url, function(transport) {
+      queue_entry.response = transport.responseText;
+      queue_entry.loaded = true;
+      injectScripts();
     });
   };
   
   var injectScripts = function() {
-    var document_head = document.getElementsByTagName('head')[0];
     for (var i = 0, len = queued_scripts.length; i < len; i++) {
       var script = queued_scripts[i];
-      if (!script.done || !script.response) { break; }
+      if (!script.loaded) { break; }
+      if (script.injected) { continue; }
       
       var se = document.createElement('script');
-      document_head.appendChild(se);
-      se.text = qScript.response;
+      document.getElementsByTagName('head')[0].appendChild(se);
+      se.text = script.response;
       
       script.callback(script.url);
-      script.done = true;
+      script.injected = true;
     }
   };
   
