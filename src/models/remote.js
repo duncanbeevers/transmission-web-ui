@@ -8,6 +8,8 @@ Transmission.RemoteEvent = Transmission.Events('RequestAllTorrentIds');
 
 Transmission.Remote = (function() { return function(url) {
   var rpc = function(data, callback) {
+    if (!url) { return; }
+    
     new Ajax.Request(url, {
       postBody: Object.toJSON(data),
       onSuccess: function(response) {
