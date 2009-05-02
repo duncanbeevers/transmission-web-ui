@@ -7,4 +7,4 @@ Transmission.Torrent = (function() { return function(id) {
       return id;
     }
   };
-}; }());
+}; })();

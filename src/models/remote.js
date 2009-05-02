@@ -37,6 +37,6 @@ Transmission.Remote = (function() { return function() {
   return Transmission.extend(Transmission.EventDispatcher, {
     requestAllTorrentIds: requestAllTorrentIds
   });
-}; }());
+}; })();
 
 Transmission.Remote.URL = '<%= RPC_URL %>';

@@ -21,4 +21,4 @@ Transmission.Timer = (function() { return function(fn, initialInterval) {
       if (timer) { clearInterval(timer); }
     }
   };
-}; }());
+}; })();
