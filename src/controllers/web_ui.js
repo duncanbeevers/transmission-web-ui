@@ -23,7 +23,11 @@ Transmission.WebUI = (function() { return function(config, remote) {
     var ids = ids_to_process.splice(0, config.TORRENT_IDS_TO_ADD_PER_PROCESS_INTERVAL),
         new_ids = torrent_list_manager.newIdsInList(ids);
     
-    if (new_ids.length) { torrent_list_manager.addIds(new_ids); }
+    if (new_ids.length) {
+      torrent_list_manager.addIds(new_ids);
+    } else {
+      torrent_list_updater.stop();
+    }
   };
   
   var torrent_list_updater = new Transmission.Timer(addSliceOfIds, config.TORRENT_IDS_PROCESS_INTERVAL);
