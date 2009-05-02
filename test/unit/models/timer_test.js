@@ -31,6 +31,17 @@ function() { return {
     this.assertEqual(1, invocations_count);
   },
   
+  testShouldNotReinvokeWhenRunning: function() {
+    var invocations_count = 0,
+        timer = new Transmission.Timer(function() {
+          invocations_count += 1;
+        }, 1000);
+    timer.start();
+    timer.start();
+    timer.stop();
+    this.assertEqual(1, invocations_count);
+  },
+  
   testRepeat: function() {
     var invocations_count = 0,
         interval = 100,

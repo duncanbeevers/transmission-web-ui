@@ -8,17 +8,21 @@
 Transmission.Timer = (function() { return function(fn, initialInterval) {
   var work     = fn,
       interval = initialInterval,
-      timer;
+      timer    = null;
   return {
     interval: function() {
       return interval;
     },
     start: function() {
+      if (timer) { return; }
       work();
       timer = setInterval(work, interval);
     },
     stop: function() {
-      if (timer) { clearInterval(timer); }
+      if (timer) {
+        clearInterval(timer);
+        timer = null;
+      }
     }
   };
 }; })();
