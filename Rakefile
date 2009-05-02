@@ -110,8 +110,10 @@ task :compress_script_loader do
   src = File.join(root, 'src/lib/script_loader.js')
   jar = File.join(root, 'vendor/yuicompressor-2.4.2.jar')
   out = File.join(root, 'public/sl.js')
+  pub = File.join(root, 'public/script_loader.js')
   
   system('java', '-jar', jar, '--type', 'js', '-o', out, src)
+  FileUtils.cp(src, pub)
 end
 
 
