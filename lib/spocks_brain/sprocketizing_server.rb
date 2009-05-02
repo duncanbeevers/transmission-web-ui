@@ -1,6 +1,7 @@
 require 'rubygems'
 require 'sinatra'
 require 'sprockets'
+require 'json'
 
 class SprocketizingServer < Sinatra::Default
   if !(defined?(APP_ROOT))
@@ -13,7 +14,9 @@ class SprocketizingServer < Sinatra::Default
   # Routes
   get '/sprocketize/*' do
     headers 'Content-Type' => 'application/x-javascript'
-    secretary(params[:splat]).concatenation.to_s
+    sec = secretary(params[:splat])
+    sec.environment.constants.merge!('CONFIG_JSON' => sec.environment.constants.to_json)
+    sec.concatenation.to_s
   end
   
   def secretary source_files
