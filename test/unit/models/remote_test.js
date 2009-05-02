@@ -22,13 +22,15 @@ function() { return {
       arguments: { fields: [ 'id' ] }
     });
     
-    var ids = [], remote = new Transmission.Remote();
+    var ids = [],
+        url = '/specified_url',
+        remote = new Transmission.Remote(url);
     remote.addEventListener(Transmission.RemoteEvent.RequestAllTorrentIds, function(event) {
       ids = event.getData().ids
     });
     remote.requestAllTorrentIds();
     
-    this.assertEqual(Transmission.Remote.URL, transport.url);
+    this.assertEqual(url, transport.url);
     this.assertEqual(expected_command, transport.data);
     
     // Wait for events to fire
