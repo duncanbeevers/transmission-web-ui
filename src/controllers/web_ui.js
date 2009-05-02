@@ -12,7 +12,7 @@ Transmission.WebUI = (function() { return function(config, remote) {
   
   var ids_to_process = [];
   var updateAllIds = function() {
-    remote.addEventListener(Transmission.RemoteEvent.RequestAllTorrentIds,
+    remote.addEventListener(Transmission.RemoteEvent.ReceivedAllTorrentIds,
       function(event) {
         ids_to_process = ids_to_process.concat(event.getData().ids);
         torrent_list_updater.start();

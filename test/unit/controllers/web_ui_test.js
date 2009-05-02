@@ -15,11 +15,17 @@ function() { return {
   },
   
   testRequestsIds: function() {
-    var remote = new MockRemote();
+    var remote = new Transmission.Remote();
     var ui = new Transmission.WebUI(new Transmission.Config(), remote);
+    
+    var have_all_ids_been_requested = false;
+    remote.addEventListener(Transmission.RemoteEvent.RequestedAllTorrentIds, function() {
+      have_all_ids_been_requested = true;
+    });
+    
     ui.start();
     this.wait(10, function() {
-      this.assert(remote.haveAllIdsBeenRequested());
+      this.assert(have_all_ids_been_requested);
     });
   },
   
@@ -31,10 +37,9 @@ function() { return {
     }), remote);
     
     ui.start();
-    
     this.wait(10, function() {
       remote.dispatchEvent(
-        new Transmission.RemoteEvent.RequestAllTorrentIds( { ids: [ 1, 2, 3 ] } )
+        new Transmission.RemoteEvent.ReceivedAllTorrentIds( { ids: [ 1, 2, 3 ] } )
       );
       this.wait(10, function() {
         this.assert(ui.getTorrent(1));
