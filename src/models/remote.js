@@ -43,21 +43,23 @@ Transmission.Remote = (function() { return function(url) {
     });
   };
   
-  var field_group_timeouts = [];
+  var request_fields_groups = [];
   var groupedRequestFields = function(ids, fields, queue_duration) {
-    var group = field_group_timeouts.find(function(group) {
-      return fields === group.fields;
-    });
+    var isSameFields = function(g) { return fields === g.fields; },
+        group = request_fields_groups.find(isSameFields);
+    
     if (group) {
       group.ids = group.ids.concat(ids).uniq();
     } else {
       group = { fields: fields, ids: ids };
       var requestFieldsFn = (function(group) { return function() {
         remote.requestFields(group.ids, group.fields);
+        clearTimeout(group.timeout);
+        request_fields_groups = request_fields_groups.reject(isSameFields);
       }; });
-
-      setTimeout(requestFieldsFn(group), queue_duration);
-      field_group_timeouts.push(group);
+      
+      group.timeout = setTimeout(requestFieldsFn(group), queue_duration);
+      request_fields_groups.push(group);
     }
   };
   
