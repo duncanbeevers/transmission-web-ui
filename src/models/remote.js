@@ -9,7 +9,7 @@ Transmission.RemoteEvent = Transmission.Events(
   'ReceivedFields', 'ReceivedTorrentFields');
 
 Transmission.Remote = (function() { return function(config) {
-  var url = (config && config.RPC_URL);
+  var url = config.RPC_URL;
   var rpc = function(data, callback) {
     if (!url) { return; }
     
@@ -45,9 +45,10 @@ Transmission.Remote = (function() { return function(config) {
   };
   
   var request_fields_groups = [];
-  var groupedRequestFields = function(ids, fields, queue_duration) {
+  var groupedRequestFields = function(ids, fields) {
     var isSameFields = function(g) { return fields === g.fields; },
-        group = request_fields_groups.find(isSameFields);
+        group = request_fields_groups.find(isSameFields),
+        queue_duration = config.GROUPED_REQUEST_FIELDS_INTERVAL;
     
     if (group) {
       group.ids = group.ids.concat(ids).uniq();

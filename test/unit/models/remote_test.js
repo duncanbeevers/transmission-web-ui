@@ -112,7 +112,10 @@ return {
   
   testGroupedRequestFields: function() {
     var requested_fields = [ 'files' ];
-    var remote = new Transmission.Remote( { RPC_URL: 'url' } );
+    var remote = new Transmission.Remote(
+      { RPC_URL: 'url',
+        GROUPED_REQUEST_FIELDS_INTERVAL: 20 //ms
+      });
     
     var transport = new MockXmlHttpRequest().serverRespondsJSON({
       arguments: { torrents: [ fixtureTorrentData1 ] }, 
@@ -120,12 +123,12 @@ return {
     });
     jack.expect('Ajax.getTransport').exactly('2 times').returnValue(transport);
     
-    remote.groupedRequestFields([ 1 ], requested_fields, 20);
+    remote.groupedRequestFields([ 1 ], requested_fields);
     this.wait(1, function() {
-      remote.groupedRequestFields([ 2 ], requested_fields, 20);
+      remote.groupedRequestFields([ 2 ], requested_fields);
       this.wait(40, function() {
         this.assertSameElements( [ 1, 2 ], transport.dataJSON().arguments.ids);
-        remote.groupedRequestFields([ 1 ], requested_fields, 20);
+        remote.groupedRequestFields([ 1 ], requested_fields);
         this.wait(40, function() {
           this.assertSameElements( [ 1 ], transport.dataJSON().arguments.ids);
         });
