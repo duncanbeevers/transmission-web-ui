@@ -57,12 +57,12 @@ return function(name) {
       getType = function() { return type; },
       getName = function() { return name; },
       c = function(data) {
-    return {
-      getData: function() { return data; },
-      getType: getType,
-      getName: getName
-    };
-  };
+        return {
+          getData: function() { return data; },
+          getType: getType,
+          getName: getName
+        };
+      };
   c.getType = getType;
   c.getName = getName;
   
