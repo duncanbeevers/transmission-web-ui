@@ -1,5 +1,5 @@
 //= require <transmission>
-//= require <events>
+//= require <torrent_events>
 //= require <remote>
 //= require <torrent>
 
