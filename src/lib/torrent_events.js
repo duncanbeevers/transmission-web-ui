@@ -35,6 +35,16 @@ Transmission.TorrentEventDispatcher = (function() {
         torrents_callbacks[torrent_id][t] = [];
       }
       torrents_callbacks[torrent_id][t].push(callback);
+    },
+    
+    removeTorrentEventListener: function(event_type, torrent_id, callback) {
+      if (!torrents_callbacks[torrent_id]) { return; }
+      var t = event_type.getType();
+      if (!torrents_callbacks[torrent_id][t]) { return; }
+      torrents_callbacks[torrent_id][t] = torrents_callbacks[torrent_id][t].filter(function(c) {
+        return c != callback;
+      });
     }
+    
   });
 } ());
