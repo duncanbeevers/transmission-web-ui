@@ -30,7 +30,7 @@ Transmission.Remote = (function() { return function(url) {
       ids: ids, fields: fields.concat('id')
     }, function(args) {
       remote.dispatchEvent(
-        new Transmission.RemoteEvent.ReceivedFields({ torrent_data: args.torrents[0] })
+        new Transmission.RemoteEvent.ReceivedFields({ torrents_data: args.torrents })
       );
     });
   };
