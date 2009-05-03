@@ -1,5 +1,14 @@
-function() { return {
-  // replace this with your real tests
+function() {
+  var fixtureTorrentData1 = {
+      id: 1,
+      files: [ {
+        bytesCompleted: 13543923,
+        length: 13543924,
+        name: "Flight of the Knife 320\/01 Flight of the Knife (Part One).mp3"
+      } ]
+    };
+
+return {
   setup: function() {
     
   },
@@ -47,15 +56,8 @@ function() { return {
   
   testRequestFields: function() {
     var remote = new Transmission.Remote('url');
-    var expected_torrents_data = [ {
-      id: 1,
-      files: [ {
-        bytesCompleted: 13543923, 
-        length: 13543924, 
-        name: "Flight of the Knife 320\/01 Flight of the Knife (Part One).mp3"
-      } ]
-    } ],
-      expected_single_torrent_data = expected_torrents_data[0];
+    var expected_torrents_data = [ fixtureTorrentData1 ],
+      expected_single_torrent_data = fixtureTorrentData1;
     
     var transport = new MockXmlHttpRequest().serverRespondsJSON({
       arguments: { torrents: expected_torrents_data }, 
