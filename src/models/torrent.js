@@ -2,7 +2,7 @@
 //= require <events>
 
 Transmission.Torrent = (function() { return function(id) {
-  var files;
+  var files = [];
   var getId = function() { return id; };
   var getFiles = function() { return files; };
   

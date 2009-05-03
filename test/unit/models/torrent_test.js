@@ -15,7 +15,7 @@ function() { return {
   
   testGetFiles: function() {
     var torrent = new Transmission.Torrent(1);
-    torrent.getFiles();
+    this.assertSameElements([], torrent.getFiles());
   }
   
 }; }
