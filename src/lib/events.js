@@ -65,4 +65,4 @@ return function(name) {
   c.getName = function() { return name; };
   
   return c;
-}; }());
+}; })();

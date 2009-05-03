@@ -45,4 +45,4 @@ Transmission.WebUI = (function() { return function(config, remote) {
     start: start,
     getTorrent: getTorrent
   };
-}; }());
+}; })();

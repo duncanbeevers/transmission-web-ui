@@ -60,4 +60,4 @@ Transmission.TorrentListManager = (function() { return function() {
   
   return torrent_list_manager;
   
-}; }());
+}; })();
