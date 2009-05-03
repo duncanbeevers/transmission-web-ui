@@ -18,26 +18,27 @@ Transmission.TorrentListManager = (function() { return function() {
   var getTorrent = function(id) { return torrents[id]; };
   
   var addIds = function(ids_to_add) {
-    addNewIds(this, newIdsInList(ids_to_add));
-  };
-  
-  var addNewIds = function(tlm, ids_to_add) {
-    ids_to_add.each(function(id) {
+    var new_ids = newIdsInList(ids_to_add), id;
+    for (var i = new_ids.length - 1; i >= 0; i--) {
+      id = new_ids[i];
       torrents[id] = new Transmission.Torrent(id);
-      tlm.dispatchEvent(
-        new Transmission.TorrentListEvent.TorrentAdded( { torrent: torrents[id] } )
+      torrent_list_manager.dispatchEvent(
+        new Transmission.TorrentListEvent.TorrentAdded({
+          torrent: torrents[id]
+        })
       );
-    });
-    ids = ids.concat(ids_to_add);
+    }
+    ids = ids.concat(new_ids);
   };
   
   var removeIds = function(ids_to_remove) {
-    var tlm = this;
-    ids_to_remove.each(function(id) {
-      tlm.dispatchEvent(
-        new Transmission.TorrentListEvent.TorrentRemoved( { torrent: torrents[id] } )
-      )
-    });
+    for (var i = ids_to_remove.length - 1; i >= 0; i--) {
+      torrent_list_manager.dispatchEvent(
+        new Transmission.TorrentListEvent.TorrentRemoved({
+          torrent: torrents[ids_to_remove[i]]
+        })
+      );
+    }
     ids = ids.filter(function(id) {
       return !ids_to_remove.include(id);
     });
@@ -50,11 +51,13 @@ Transmission.TorrentListManager = (function() { return function() {
   };
   
   
-  return Transmission.extend(Transmission.EventDispatcher, {
+  var torrent_list_manager = Transmission.extend(Transmission.EventDispatcher, {
     getIds: getIds,
     getTorrent: getTorrent,
     addIds: addIds,
     removeIds: removeIds
   });
+  
+  return torrent_list_manager;
   
 }; }());
