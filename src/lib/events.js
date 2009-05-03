@@ -13,18 +13,18 @@ Transmission.EventDispatcher = (function() { return function() {
   
   return {
     dispatchEvent: function(event) {
-      console.dir(callbacks);
       (callbacks[event.getType()] || []).each(function(callback) {
         callback.defer(event);
       });
     },
     addEventListener: function(event_type, callback) {
       var t = event_type.getType();
+      
       if (!callbacks[t]) { callbacks[t] = []; }
       callbacks[t].push(callback);
     }
   };
-} })();
+}; })();
 
 /**
   Conveniently construct a namespace of events
@@ -50,14 +50,19 @@ Transmission.Events = (function() {
   itself as well as its instances.
   
 **/
-Transmission.EventType = (function() { return function(type) {
-  var c = function(data) {
+Transmission.EventType = (function() {
+  var events_count = 0;
+return function(name) {
+  var type = events_count++,
+    c = function(data) {
     return {
       getType: function() { return type; },
-      getData: function() { return data; }
-    }
+      getData: function() { return data; },
+      getName: function() { return name; }
+    };
   };
-  c.getType = function() { return type; }
+  c.getType = function() { return type; };
+  c.getName = function() { return name; };
   
   return c;
 }; }());
