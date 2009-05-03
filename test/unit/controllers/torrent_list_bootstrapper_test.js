@@ -10,7 +10,7 @@ function() { return {
   testRequestsIds: function() {
     var remote = new Transmission.Remote();
     var bootstrapper = new Transmission.TorrentListBootstrapper(
-      10, 10000, Prototype.emptyFunction, remote);
+      10, 10000, remote);
     
     var have_all_ids_been_requested = false;
     remote.addEventListener(Transmission.RemoteEvent.RequestedAllTorrentIds, function() {
@@ -24,18 +24,22 @@ function() { return {
   },
   
   testProcessesSlicesOfIds: function() {
-    var added_ids = [], addIds = function(ids) {
-      added_ids = ids;
-    };
+    var added_ids = null;
     var remote = new Transmission.Remote();
     var bootstrapper = new Transmission.TorrentListBootstrapper(
-      2, 10000, addIds, remote);
+      2, 10000, remote);
+    
+    bootstrapper.addEventListener(
+      Transmission.TorrentListBootstrapperEvent.AddedSlice,
+      function(event) {
+        if (!added_ids) { added_ids = event.getData().ids; }
+      });
     
     bootstrapper.start();
     remote.dispatchEvent(
       new Transmission.RemoteEvent.ReceivedAllTorrentIds( { ids: [ 1, 2, 3 ] } )
     );
-    this.wait(10, function() {
+    this.wait(100, function() {
       this.assertSameElements([ 1, 2 ], added_ids);
     });
   }
