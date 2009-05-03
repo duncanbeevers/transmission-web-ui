@@ -10,7 +10,10 @@
 **/
 Transmission.TorrentFileListEvents = Transmission.Events();
 
-Transmission.TorrentFileList = (function() { return function(torrent, remote) {
+Transmission.TorrentFileList = (function() {
+  var bootstrap_fields = [ 'files' ];
+  
+return function(torrent, remote) {
   var torrent_id = torrent.getId();
   
   var onReceivedTorrentFields = function(event) {
@@ -24,7 +27,7 @@ Transmission.TorrentFileList = (function() { return function(torrent, remote) {
     Transmission.RemoteEvent.ReceivedTorrentFields,
     torrent_id, onReceivedTorrentFields);
   
-  remote.requestFields( [ torrent_id ], [ 'files' ]);
+  remote.requestFields( [ torrent_id ], bootstrap_fields);
   
   return {
     
