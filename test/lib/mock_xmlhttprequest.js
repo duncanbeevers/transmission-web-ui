@@ -41,6 +41,7 @@ MockXmlHttpRequest.prototype.open = function(method, url, isAsync, userName, pas
  */
 MockXmlHttpRequest.prototype.send = function(data) {
     this.sendCalled = true;
+    this._dataJSON = null;
     this.data = data;
     
     if (this._serverResponseSet) {
