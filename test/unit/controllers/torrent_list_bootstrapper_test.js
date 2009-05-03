@@ -8,7 +8,7 @@ function() { return {
   },
   
   testRequestsIds: function() {
-    var remote = new Transmission.Remote();
+    var remote = new Transmission.Remote({});
     var bootstrapper = new Transmission.TorrentListBootstrapper(
       10, 10000, remote);
     
@@ -25,7 +25,7 @@ function() { return {
   
   testProcessesSlicesOfIds: function() {
     var added_ids = null;
-    var remote = new Transmission.Remote();
+    var remote = new Transmission.Remote({});
     var bootstrapper = new Transmission.TorrentListBootstrapper(
       2, 10000, remote);
     
