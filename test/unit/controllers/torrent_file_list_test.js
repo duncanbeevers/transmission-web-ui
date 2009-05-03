@@ -8,7 +8,7 @@ function() { return {
   },
   
   testRequestsFields: function() {
-    var remote = new Transmission.Remote();
+    var remote = new Transmission.Remote({});
     
     var requested_torrent_id;
     remote.addTorrentEventListener(
