@@ -34,7 +34,7 @@ return {
     var all_ids_requested = false,
         ids = [],
         url = '/specified_url',
-        remote = new Transmission.Remote(url);
+        remote = new Transmission.Remote( { RPC_URL: url } );
     
     remote.addEventListener(Transmission.RemoteEvent.RequestedAllTorrentIds, function(event) {
       all_ids_requested = true;
@@ -55,7 +55,7 @@ return {
   },
   
   testRequestFields: function() {
-    var remote = new Transmission.Remote('url');
+    var remote = new Transmission.Remote( { RPC_URL: 'url' } );
     var expected_torrents_data = [ fixtureTorrentData1 ],
       expected_single_torrent_data = fixtureTorrentData1;
     
@@ -112,7 +112,7 @@ return {
   
   testGroupedRequestFields: function() {
     var requested_fields = [ 'files' ];
-    var remote = new Transmission.Remote('url');
+    var remote = new Transmission.Remote( { RPC_URL: 'url' } );
     
     var transport = new MockXmlHttpRequest().serverRespondsJSON({
       arguments: { torrents: [ fixtureTorrentData1 ] }, 
@@ -128,7 +128,7 @@ return {
         remote.groupedRequestFields([ 1 ], requested_fields, 20);
         this.wait(40, function() {
           this.assertSameElements( [ 1 ], transport.dataJSON().arguments.ids);
-        })
+        });
       });
     });
   }

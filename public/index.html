@@ -9,7 +9,7 @@
 var ui, config, transmission_src = 'transmission-web-ui.js';
 ScriptLoader.loadScripts([transmission_src], function() {
   config = new Transmission.Config();
-  ui = new Transmission.WebUI(config, new Transmission.Remote(config.RPC_URL));
+  ui = new Transmission.WebUI(config, new Transmission.Remote(config));
 });
 
     </script>

@@ -8,7 +8,8 @@ function() { return {
   },
   
   testMarkupReady: function() {
-    var ui = new Transmission.WebUI(new Transmission.Config(), new Transmission.Remote());
+    var config = new Transmission.Config();
+    var ui = new Transmission.WebUI(config, new Transmission.Remote(config));
     this.assertNothingRaised(function() {
       ui.markupReady();
     });

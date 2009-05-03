@@ -8,7 +8,8 @@ Transmission.RemoteEvent = Transmission.Events(
   'RequestedAllTorrentIds', 'ReceivedAllTorrentIds',
   'ReceivedFields', 'ReceivedTorrentFields');
 
-Transmission.Remote = (function() { return function(url) {
+Transmission.Remote = (function() { return function(config) {
+  var url = (config && config.RPC_URL);
   var rpc = function(data, callback) {
     if (!url) { return; }
     
