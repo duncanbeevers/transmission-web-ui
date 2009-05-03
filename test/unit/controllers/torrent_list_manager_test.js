@@ -30,13 +30,6 @@ function() { return {
     this.assertSameElements([ 2 ], tlm.getIds());
   },
   
-  testNewIdsInList: function() {
-    var tlm = new Transmission.TorrentListManager();
-    tlm.addIds([ 1 ]);
-    var all_torrent_ids = [ 1, 2 ];
-    this.assertSameElements([ 2 ], tlm.newIdsInList(all_torrent_ids));
-  },
-  
   testOnTorrentAdded: function() {
     var torrent_added;
     var tlm = new Transmission.TorrentListManager();
@@ -47,7 +40,9 @@ function() { return {
       });
     
     tlm.addIds([ 1 ]);
-    this.assertEqual(1, torrent_added.getId());
+    this.wait(10, function() {
+      this.assertEqual(1, torrent_added.getId());
+    });
   },
   
   testOnTorrentRemoved: function() {
@@ -61,7 +56,9 @@ function() { return {
     
     tlm.addIds([ 1 ]);
     tlm.removeIds([ 1 ]);
-    this.assertEqual(1, torrent_removed.getId());
+    this.wait(10, function() {
+      this.assertEqual(1, torrent_removed.getId());
+    });
   }
   
 }; }
