@@ -9,10 +9,10 @@
   
   Event dispatch itself should be invoked within the instance.
 **/
-Transmission.TorrentEventDispatcher = (function() {
+Transmission.TorrentEventDispatcher = (function() { return function() {
   var torrents_callbacks = {};
   
-  return Transmission.extend(Transmission.EventDispatcher, {
+  return Transmission.extend(new Transmission.EventDispatcher(), {
     dispatchTorrentEvent: function(event) {
       var data = event.getData().torrent_data,
           torrent_callbacks = torrents_callbacks[data.id];
@@ -47,4 +47,4 @@ Transmission.TorrentEventDispatcher = (function() {
     }
     
   });
-} ());
+}; })();

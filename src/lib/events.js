@@ -8,11 +8,12 @@
   
   Event dispatch itself should be invoked within the instance.
 **/
-Transmission.EventDispatcher = (function() {
+Transmission.EventDispatcher = (function() { return function() {
   var callbacks = {};
   
   return {
     dispatchEvent: function(event) {
+      console.dir(callbacks);
       (callbacks[event.getType()] || []).each(function(callback) {
         callback.defer(event);
       });
@@ -23,7 +24,7 @@ Transmission.EventDispatcher = (function() {
       callbacks[t].push(callback);
     }
   };
-} ());
+} })();
 
 /**
   Conveniently construct a namespace of events
