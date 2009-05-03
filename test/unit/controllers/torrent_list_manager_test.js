@@ -23,6 +23,13 @@ function() { return {
     this.assertSameElements([ 1 ], tlm.getIds());
   },
   
+  testAddIdsDoesntDuplicate: function() {
+    var tlm = new Transmission.TorrentListManager();
+    tlm.addIds([ 1 ]);
+    tlm.addIds([ 1 ]);
+    this.assertSameElements([ 1 ], tlm.getIds());
+  },
+  
   testRemoveIds: function() {
     var tlm = new Transmission.TorrentListManager();
     tlm.addIds([ 1, 2 ]);
