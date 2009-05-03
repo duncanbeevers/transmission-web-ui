@@ -33,7 +33,7 @@
               return function() { return true; }
             })();
         
-        var runner = new Test.Unit.Runner($H(#{@function_returning_test_methods})().
+        var runner = new Test.Unit.Runner($H(#{@function_returning_test_methods}()).
           filter(testFilter).inject({}, function(a, p) {
             a[p.key] = p.value;
             return a;
