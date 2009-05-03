@@ -20,3 +20,4 @@ Launch the test server
 * Preprocessing implemented with [sprockets](http://www.getsprockets.org)
 * Icons from [fugue](http://www.pinvoke.com/)
 * [Gauge.js](http://www.netzgesta.de/gauge/) graphics library by Christian Effenberger
+* RegExp.escape from [Simon Willison](http://simonwillison.net/2006/Jan/20/escape/)
