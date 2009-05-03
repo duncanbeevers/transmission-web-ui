@@ -12,6 +12,9 @@ Launch the test server
   <tt>script/server</tt> to launch sprocketizing server and test work handler
   <tt>script/js_autotest</tt> to begin watching source files to push jobs to processor
 
+With the server running, you may visit individual test pages
+  [http://localhost:4567/test/models/remote](http://localhost:4567/test/models/remote)
+
 
 ## Thanks
 * JavaScript unit testing implemented with [jsunittest](http://jsunittest.com/)
