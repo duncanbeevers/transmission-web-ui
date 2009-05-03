@@ -42,7 +42,7 @@ function() { return {
     this.wait(10, function() {
       this.assertSameElements([ 1 ], ids, 'Expected event to have list of ids');
       this.assert(all_ids_requested);
-    }.bind(this));
+    });
   },
   
   testRequestFields: function() {
