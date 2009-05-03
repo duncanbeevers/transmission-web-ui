@@ -108,6 +108,25 @@ return {
         this.assertEqual(expected_single_torrent_file_data.name, single_torrent_file_data.name);
       }
     });
+  },
+  
+  testGroupedRequestFields: function() {
+    var requested_fields = [ 'files' ];
+    var remote = new Transmission.Remote('url');
+    
+    var transport = new MockXmlHttpRequest().serverRespondsJSON({
+      arguments: { torrents: [ fixtureTorrentData1 ] }, 
+      result: "success"
+    });
+    jack.expect('Ajax.getTransport').returnValue(transport);
+    
+    remote.groupedRequestFields([ 1 ], requested_fields);
+    this.wait(1, function() {
+      remote.groupedRequestFields([ 2 ], requested_fields);
+      this.wait(20, function() {
+        
+      });
+    });
   }
   
 }; }

@@ -43,11 +43,14 @@ Transmission.Remote = (function() { return function(url) {
     });
   };
   
+  var groupedRequestFields = function(ids, fields) {
+    remote.requestFields(ids, fields);
+  };
+  
   var requestAllTorrentIds = function() {
-    this.dispatchEvent(
+    remote.dispatchEvent(
       new Transmission.RemoteEvent.RequestedAllTorrentIds()
     );
-    var remote = this;
     torrentGet({
       fields: [ 'id' ]
     }, function(args) {
@@ -59,7 +62,8 @@ Transmission.Remote = (function() { return function(url) {
   
   var remote = Transmission.extend(Transmission.TorrentEventDispatcher, {
     requestAllTorrentIds: requestAllTorrentIds,
-    requestFields: requestFields
+    requestFields: requestFields,
+    groupedRequestFields: groupedRequestFields
   });
   
   return remote;
