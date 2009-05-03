@@ -54,15 +54,17 @@ Transmission.EventType = (function() {
   var events_count = 0;
 return function(name) {
   var type = events_count++,
-    c = function(data) {
+      getType = function() { return type; },
+      getName = function() { return name; },
+      c = function(data) {
     return {
-      getType: function() { return type; },
       getData: function() { return data; },
-      getName: function() { return name; }
+      getType: getType,
+      getName: getName
     };
   };
-  c.getType = function() { return type; };
-  c.getName = function() { return name; };
+  c.getType = getType;
+  c.getName = getName;
   
   return c;
 }; })();
