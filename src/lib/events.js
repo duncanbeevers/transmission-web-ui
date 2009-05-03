@@ -33,7 +33,8 @@ Transmission.EventDispatcher = (function() { return function() {
     event = new Transmission.TorrentEvents.TorrentAdded('data');
     
     event.getData() -> 'data'
-    event.getType() -> 'TorrentAdded'
+    event.getName() -> 'TorrentAdded'
+    event.getType() -> An opaque integer unique to this event class
     
 **/
 Transmission.Events = (function() {
