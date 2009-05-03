@@ -36,7 +36,7 @@ Transmission.TorrentListBootstrapper = (function() { return function(
   };
   var torrent_list_updater = new Transmission.Timer(addSliceOfIds, process_interval);
   
-  var bootstrapper = Transmission.extend(Transmission.EventDispatcher, {
+  var bootstrapper = Transmission.extend(new Transmission.EventDispatcher(), {
     start: updateAllIds
   });
   

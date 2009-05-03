@@ -76,7 +76,7 @@ Transmission.Remote = (function() { return function(url) {
     });
   };
   
-  var remote = Transmission.extend(Transmission.TorrentEventDispatcher, {
+  var remote = Transmission.extend(new Transmission.TorrentEventDispatcher(), {
     requestAllTorrentIds: requestAllTorrentIds,
     requestFields: requestFields,
     groupedRequestFields: groupedRequestFields

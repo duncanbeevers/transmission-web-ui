@@ -51,7 +51,7 @@ Transmission.TorrentListManager = (function() { return function() {
   };
   
   
-  var torrent_list_manager = Transmission.extend(Transmission.EventDispatcher, {
+  var torrent_list_manager = Transmission.extend(new Transmission.EventDispatcher(), {
     getIds: getIds,
     getTorrent: getTorrent,
     addIds: addIds,
