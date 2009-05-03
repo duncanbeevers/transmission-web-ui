@@ -27,7 +27,7 @@ return function(torrent, remote) {
     Transmission.RemoteEvent.ReceivedTorrentFields,
     torrent_id, onReceivedTorrentFields);
   
-  remote.requestFields( [ torrent_id ], bootstrap_fields);
+  remote.groupedRequestFields( [ torrent_id ], bootstrap_fields, 100);
   
   return {
     
