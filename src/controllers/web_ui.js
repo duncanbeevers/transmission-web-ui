@@ -12,7 +12,7 @@ Transmission.WebUI = (function() { return function(config, remote) {
   var bootstrapper = new Transmission.TorrentListBootstrapper(
     config.TORRENT_IDS_TO_ADD_PER_PROCESS_INTERVAL,
     config.TORRENT_IDS_PROCESS_INTERVAL,
-    torrent_list_manager.addNewIds,
+    torrent_list_manager.addIds,
     remote);
   
   var start = function() {
