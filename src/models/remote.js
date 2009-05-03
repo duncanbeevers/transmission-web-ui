@@ -43,8 +43,22 @@ Transmission.Remote = (function() { return function(url) {
     });
   };
   
-  var groupedRequestFields = function(ids, fields) {
-    remote.requestFields(ids, fields);
+  var field_group_timeouts = [];
+  var groupedRequestFields = function(ids, fields, queue_duration) {
+    var group = field_group_timeouts.find(function(group) {
+      return fields === group.fields;
+    });
+    if (group) {
+      group.ids = group.ids.concat(ids).uniq();
+    } else {
+      group = { fields: fields, ids: ids };
+      var requestFieldsFn = (function(group) { return function() {
+        remote.requestFields(group.ids, group.fields);
+      }; });
+
+      setTimeout(requestFieldsFn(group), queue_duration);
+      field_group_timeouts.push(group);
+    }
   };
   
   var requestAllTorrentIds = function() {

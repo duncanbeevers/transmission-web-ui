@@ -120,11 +120,11 @@ return {
     });
     jack.expect('Ajax.getTransport').returnValue(transport);
     
-    remote.groupedRequestFields([ 1 ], requested_fields);
+    remote.groupedRequestFields([ 1 ], requested_fields, 20);
     this.wait(1, function() {
-      remote.groupedRequestFields([ 2 ], requested_fields);
-      this.wait(20, function() {
-        
+      remote.groupedRequestFields([ 2 ], requested_fields, 20);
+      this.wait(40, function() {
+        this.assertSameElements( [ 1, 2 ], transport.dataJSON().arguments.ids);
       });
     });
   }
