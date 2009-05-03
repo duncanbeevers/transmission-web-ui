@@ -33,6 +33,7 @@ task :dist do
   require 'protodoc'
   require 'fileutils'
   require 'sprockets'
+  require 'json'
   FileUtils.mkdir_p APP_DIST_DIR
   
   secretary = Sprockets::Secretary.new(
@@ -41,6 +42,7 @@ task :dist do
     :load_path => [ File.join(APP_SRC_DIR, '**/*') ],
     :source_files => [ File.join(APP_SRC_DIR, 'controllers/web_ui.js') ]
   )
+  secretary.environment.constants.merge!('CONFIG_JSON' => secretary.environment.constants.to_json)
   Dir.chdir(APP_DIST_DIR) do
     secretary.concatenation.save_to(APP_FILE_NAME)
     FileUtils.copy_file APP_FILE_NAME, "#{APP_NAME}-#{APP_VERSION}.js"
