@@ -54,7 +54,8 @@ function() { return {
         length: 13543924, 
         name: "Flight of the Knife 320\/01 Flight of the Knife (Part One).mp3"
       } ]
-    } ];
+    } ],
+      expected_single_torrent_data = expected_torrents_data[0];
     
     var transport = new MockXmlHttpRequest().serverRespondsJSON({
       arguments: { torrents: expected_torrents_data }, 
@@ -66,12 +67,21 @@ function() { return {
     remote.addEventListener(Transmission.RemoteEvent.ReceivedFields, function(event) {
       torrents_data = event.getData().torrents_data;
     });
+    
+    var single_torrent_data = {};
+    remote.addTorrentEventListener(
+      Transmission.RemoteEvent.ReceivedTorrentFields,
+      expected_single_torrent_data.id,
+      function(event) {
+        single_torrent_data = event.getData().torrent_data;
+      });
+    
     remote.requestFields([ 1 ], [ 'files' ]);
     this.assert(transport.dataJSON().arguments.fields.include('id'),
       'Expected id to have been requested automatically');
     
-    // Bah, this is kind of lame
     this.wait(10, function() {
+      // Assert top-level event listener
       for (var i = torrents_data.length - 1; i >= 0; i--) {
         var expected_torrent_data = expected_torrents_data[i],
             torrent_data = torrents_data[i];
@@ -84,6 +94,16 @@ function() { return {
           this.assertEqual(expected_torrent_file_data.length, torrent_file_data.length);
           this.assertEqual(expected_torrent_file_data.name, torrent_file_data.name);
         }
+      }
+      
+      // Assert per-torrent event listener
+      this.assertEqual(expected_single_torrent_data.id, single_torrent_data.id);
+      for (var i = expected_single_torrent_data.files.length - 1; i >= 0; i--) {
+        var expected_single_torrent_file_data = expected_single_torrent_data.files[i],
+            single_torrent_file_data = single_torrent_data.files[i];
+        this.assertEqual(expected_single_torrent_file_data.bytesCompleted, single_torrent_file_data.bytesCompleted);
+        this.assertEqual(expected_single_torrent_file_data.length, single_torrent_file_data.length);
+        this.assertEqual(expected_single_torrent_file_data.name, single_torrent_file_data.name);
       }
     });
   }

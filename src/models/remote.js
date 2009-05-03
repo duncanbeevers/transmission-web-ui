@@ -1,10 +1,12 @@
 //= require <transmission>
-//= require <events>
+//= require <torrent_events>
 
 /* Trasmission.Remote is responsible for transmitting messages to the rpc server
     and ferrying the responses back to interested parties.
 */
-Transmission.RemoteEvent = Transmission.Events('RequestedAllTorrentIds', 'ReceivedAllTorrentIds', 'ReceivedFields');
+Transmission.RemoteEvent = Transmission.Events(
+  'RequestedAllTorrentIds', 'ReceivedAllTorrentIds',
+  'ReceivedFields', 'ReceivedTorrentFields');
 
 Transmission.Remote = (function() { return function(url) {
   var rpc = function(data, callback) {
@@ -29,9 +31,15 @@ Transmission.Remote = (function() { return function(url) {
     torrentGet({
       ids: ids, fields: fields.concat('id')
     }, function(args) {
+      var torrents_data = args.torrents;
       remote.dispatchEvent(
-        new Transmission.RemoteEvent.ReceivedFields({ torrents_data: args.torrents })
+        new Transmission.RemoteEvent.ReceivedFields({ torrents_data: torrents_data })
       );
+      for (var i = torrents_data.length - 1; i >= 0; i--) {
+        remote.dispatchTorrentEvent(
+          new Transmission.RemoteEvent.ReceivedTorrentFields({ torrent_data: torrents_data[i] })
+        );
+      }
     });
   };
   
@@ -49,7 +57,7 @@ Transmission.Remote = (function() { return function(url) {
     });
   };
   
-  var remote = Transmission.extend(Transmission.EventDispatcher, {
+  var remote = Transmission.extend(Transmission.TorrentEventDispatcher, {
     requestAllTorrentIds: requestAllTorrentIds,
     requestFields: requestFields
   });
