@@ -92,3 +92,10 @@ MockXmlHttpRequest.prototype.serverResponseHeader = function(name, value) {
   this._serverResponseHeaders[name] = value;
   return this;
 };
+
+MockXmlHttpRequest.prototype.dataJSON = function() {
+  if (!this._dataJSON) {
+    this._dataJSON = this.data.evalJSON();
+  }
+  return this._dataJSON;
+};
