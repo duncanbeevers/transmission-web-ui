@@ -29,7 +29,11 @@ return function(torrent, remote) {
   
   remote.groupedRequestFields( [ torrent_id ], bootstrap_fields);
   
+  var getFiles = function() {
+    return torrent.getFiles();
+  };
+  
   return {
-    
+    getFiles: getFiles
   };
 }; })();

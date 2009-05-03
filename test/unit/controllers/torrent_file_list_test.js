@@ -26,6 +26,13 @@ function() { return {
     this.wait(10, function() {
       this.assert(1, requested_torrent_id);
     });
+  },
+  
+  testGetFiles: function() {
+    var remote = new Transmission.Remote({});
+    var torrent = new Transmission.Torrent(1);
+    var list = new Transmission.TorrentFileList(torrent, remote);
+    this.assertEqual(torrent.getFiles(), list.getFiles());
   }
   
 }; }
