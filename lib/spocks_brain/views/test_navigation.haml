@@ -1,9 +1,8 @@
 .test_navigation
-  .model_tests
-    %h3 Model tests
-    - model_tests.each do |t|
-      %a{ :href => t[:href] }= t[:name]
-  .controller_tests
-    %h3 Controller tests
-    - controller_tests.each do |t|
-      %a{ :href => t[:href] }= t[:name]
+  - all_tests.each do |group_name, tests|
+    .group_tests
+      %h3
+        = group_name
+        tests
+      - tests.each do |t|
+        %a{ :href => t[:href] }= t[:name]

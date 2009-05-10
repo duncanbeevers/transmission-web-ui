@@ -21,15 +21,17 @@ class JsUnitTestBuilderServer < Sinatra::Default
     test_log                        = "#{object_under_test}_log"
     function_returning_test_methods = File.read(File.join(TEST_ROOT, test_file_name))
     
-    to_test_path = Proc.new do |filename|
+    to_test_group = Proc.new do |a, filename|
       trunc = Pathname.new(filename).relative_path_from(TEST_ROOT_PATHNAME).to_s.gsub(/\_test.js$/, '')
       href = '/test/' + trunc
       name = File.basename(trunc)
-      { :href => href, :name => name }
+      group = File.dirname(trunc).capitalize
+      a[group] = [] if !a[group]
+      a[group].push({ :href => href, :name => name })
+      a
     end
     
-    model_tests                     = Dir[File.join(TEST_ROOT, 'models/**/*_test.js')].map(&to_test_path)
-    controller_tests                = Dir[File.join(TEST_ROOT, 'controllers/**/*_test.js')].map(&to_test_path)
+    all_tests = Dir[File.join(TEST_ROOT, '**/*_test.js')].inject({}, &to_test_group)
     
     haml :test,
       :layout => :test_layout,
@@ -41,8 +43,7 @@ class JsUnitTestBuilderServer < Sinatra::Default
         :function_returning_test_methods => function_returning_test_methods,
         
         # Navigation
-        :model_tests                     => model_tests,
-        :controller_tests                => controller_tests
+        :all_tests                       => all_tests
       }
   end
   
