@@ -19,7 +19,7 @@
       #header
         %h1
           JavaScript unit test file for
-          %strong= object_under_test_file_name
+          %a{:href => "/sprocketize/#{object_under_test_file_name}"}= object_under_test_file_name
       =haml :test_navigation, :layout => false, :locals => { :model_tests => model_tests, :controller_tests => controller_tests }
       %div{ :id => test_log }<
     :javascript
