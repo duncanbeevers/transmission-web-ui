@@ -1,24 +1,32 @@
 //= require <transmission>
 //= require <events>
 
-Transmission.Torrent = (function() { return function(id) {
-  var files = [];
-  var attributes = {};
+Transmission.Torrent = (function() {
+  var getId = function() { return this.id; };
   
-  var getId = function() { return id; };
-  var getFiles = function() { return files; };
+  var getFiles = function() { return this.files; };
   
   var updateAttributes = function(new_attributes) {
-    attributes = Object.extend(attributes, new_attributes);
-  };
-  var getAttribute = function(attribute) {
-    return attributes[attribute];
+    this.attributes = Object.extend(this.attributes, new_attributes);
   };
   
-  return {
+  var getAttribute = function(attribute) {
+    return this.attributes[attribute];
+  };
+  
+  var constructor = function(id) {
+    this.id = id;
+    this.files = [];
+    this.attributes = {};
+  };
+  
+  constructor.prototype = {
     getId: getId,
     getFiles: getFiles,
     updateAttributes: updateAttributes,
     getAttribute: getAttribute
   };
-}; })();
+  
+  return constructor;
+  
+})();
