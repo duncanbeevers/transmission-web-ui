@@ -15,14 +15,17 @@
   
 **/
 Transmission.extend = function() {
-  var f = function(o, p) {
-    function F() {};
-    F.prototype = o;
-    return Object.extend(p, new F());
+  var f = function(mom, baby) {
+    function F(p) {
+      return Object.extend(this, p);
+    };
+    F.prototype = mom;
+    var n = new F(baby);
+    return n;
   };
   
   var o = {};
-  for (var i = 0, len = arguments.length; i < len; i++) {
+  for (var i = arguments.length; i >= 0; i--) {
     o = f(arguments[i], o);
   }
   return o;

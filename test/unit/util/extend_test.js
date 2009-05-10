@@ -47,6 +47,15 @@ function() { return {
     
     this.assert(!fn1_called);
     this.assert(fn2_called);
+  },
+  
+  testExtendedObjectsShouldNotHaveOwnPropertiesOfParents: function() {
+    var a = { property1: true };
+    
+    var k = Transmission.extend(a);
+    
+    this.assert(k.property1);
+    this.assert(!k.hasOwnProperty('property1'), 'Should not have own property');
   }
   
 }; }
