@@ -8,9 +8,9 @@ Transmission.RemoteEvent = Transmission.Events(
   'RequestedAllTorrentIds', 'ReceivedAllTorrentIds',
   'ReceivedFields', 'ReceivedTorrentFields');
 
-Transmission.Remote = (function() { return function(config) {
-  var url = config.RPC_URL;
+Transmission.Remote = (function() {
   var rpc = function(data, callback) {
+    var url = this.config.RPC_URL;
     if (!url) { return; }
     
     new Ajax.Request(url, {
@@ -25,40 +25,40 @@ Transmission.Remote = (function() { return function(config) {
   };
   
   var torrentGet = function(args, callback) {
-    rpc({ method: 'torrent-get', arguments: args }, callback);
+    rpc.bind(this)({ method: 'torrent-get', arguments: args }, callback);
   };
   
   var requestFields = function(ids, fields) {
-    torrentGet({
+    torrentGet.bind(this)({
       ids: ids, fields: fields.concat('id')
     }, function(args) {
       var torrents_data = args.torrents;
-      remote.dispatchEvent(
+      this.dispatchEvent(
         new Transmission.RemoteEvent.ReceivedFields({ torrents_data: torrents_data })
       );
       for (var i = torrents_data.length - 1; i >= 0; i--) {
-        remote.dispatchTorrentEvent(
+        this.dispatchTorrentEvent(
           new Transmission.RemoteEvent.ReceivedTorrentFields({ torrent_data: torrents_data[i] })
         );
       }
-    });
+    }.bind(this));
   };
   
-  var request_fields_groups = [];
   var groupedRequestFields = function(ids, fields) {
     var isSameFields = function(g) { return fields === g.fields; },
+        request_fields_groups = this.request_fields_groups,
         group = request_fields_groups.find(isSameFields),
-        queue_duration = config.GROUPED_REQUEST_FIELDS_INTERVAL;
+        queue_duration = this.config.GROUPED_REQUEST_FIELDS_INTERVAL;
     
     if (group) {
       group.ids = group.ids.concat(ids).uniq();
     } else {
       group = { fields: fields, ids: ids };
       var requestFieldsFn = (function(group) { return function() {
-        remote.requestFields(group.ids, group.fields);
+        requestFields.bind(this)(group.ids, group.fields);
         clearTimeout(group.timeout);
-        request_fields_groups = request_fields_groups.reject(isSameFields);
-      }; });
+        this.request_fields_groups = this.request_fields_groups.reject(isSameFields);
+      }.bind(this); }.bind(this));
       
       group.timeout = setTimeout(requestFieldsFn(group), queue_duration);
       request_fields_groups.push(group);
@@ -66,23 +66,29 @@ Transmission.Remote = (function() { return function(config) {
   };
   
   var requestAllTorrentIds = function() {
-    remote.dispatchEvent(
+    this.dispatchEvent(
       new Transmission.RemoteEvent.RequestedAllTorrentIds()
     );
-    torrentGet({
+    torrentGet.bind(this)({
       fields: [ 'id' ]
     }, function(args) {
-      remote.dispatchEvent(
+      this.dispatchEvent(
         new Transmission.RemoteEvent.ReceivedAllTorrentIds( { ids: args.torrents.pluck('id') } )
       );
-    });
+    }.bind(this));
   };
   
-  var remote = Transmission.extend(new Transmission.TorrentEventDispatcher(), {
+  var constructor = function(config) {
+    this.config = config;
+    this.request_fields_groups = [];
+  };
+  
+  constructor.prototype = Transmission.extend(new Transmission.TorrentEventDispatcher(), {
     requestAllTorrentIds: requestAllTorrentIds,
     requestFields: requestFields,
     groupedRequestFields: groupedRequestFields
   });
   
-  return remote;
-}; })();
+  return constructor;
+  
+})();
