@@ -5,24 +5,35 @@
    A Timer may be stopped, and then restarted later.
    A Timer's interval is specified in milliseconds instead of seconds
 */
-Transmission.Timer = (function() { return function(fn, initialInterval) {
-  var work     = fn,
-      interval = initialInterval,
-      timer    = null;
-  return {
-    interval: function() {
-      return interval;
-    },
-    start: function() {
-      if (timer) { return; }
-      work();
-      timer = setInterval(work, interval);
-    },
-    stop: function() {
-      if (timer) {
-        clearInterval(timer);
-        timer = null;
-      }
+Transmission.Timer = (function() {
+  var getInterval = function() {
+    return this.interval;
+  };
+  
+  var start = function() {
+    if (this.timer) { return; }
+    this.work();
+    this.timer = setInterval(this.work, this.interval);
+  };
+  
+  var stop = function() {
+    if (this.timer) {
+      clearInterval(this.timer);
+      this.timer = null;
     }
   };
-}; })();
+
+  var constructor = function(fn, initialInterval) {
+    this.work     = fn;
+    this.interval = initialInterval;
+    this.timer    = null;
+  };
+  
+  constructor.prototype = {
+    getInterval: getInterval,
+    start: start,
+    stop: stop
+  };
+  
+  return constructor;
+})();

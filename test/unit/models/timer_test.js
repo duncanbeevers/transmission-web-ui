@@ -7,10 +7,10 @@ function() { return {
     
   },
   
-  testInterval: function() {
+  testGetInterval: function() {
     var timer = new Transmission.Timer(Prototype.emptyFunction, 1000);
     
-    this.assertEqual(1000, timer.interval());
+    this.assertEqual(1000, timer.getInterval());
   },
   
   testShouldNotInvokeFunctionOnInstantiation: function() {
