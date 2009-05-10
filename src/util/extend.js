@@ -1,8 +1,17 @@
+//= require <transmission>
 /**
   Prototypal Inheritance builder
   based on Douglas Crockford's article http://javascript.crockford.com/prototypal.html
   
-  Create inheritance heirarchies by providing chains of objects to act as guides.
+  Provide a list of objects to string together in a prototypal inheritance chain.
+  
+  A, B, C
+  
+  C.prototype = B
+  B.prototype = A
+  
+  Methods defined on objects later in the list take precedence over
+  those defined earlier.
   
 **/
 Transmission.extend = function() {
