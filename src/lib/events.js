@@ -40,7 +40,7 @@ Transmission.EventDispatcher = (function() { return function() {
 Transmission.Events = (function() {
   var o = {};
   for (var i = arguments.length - 1; i >= 0; i--) {
-    o[arguments[i]] = new Transmission.EventType(arguments[i]);
+    o[arguments[i]] = Transmission.EventType(arguments[i]);
   }
   return o;
 });
