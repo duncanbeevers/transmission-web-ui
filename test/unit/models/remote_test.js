@@ -44,11 +44,11 @@ return {
     });
     remote.requestAllTorrentIds();
     
-    this.assertEqual(url, transport.url);
-    this.assertEqual(expected_command, transport.data);
-    
     // Wait for events to fire
     this.wait(10, function() {
+      this.assertEqual(url, transport.url);
+      this.assertEqual(expected_command, transport.data);
+      
       this.assertSameElements([ 1 ], ids, 'Expected event to have list of ids');
       this.assert(all_ids_requested);
     });

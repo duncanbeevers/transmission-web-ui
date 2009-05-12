@@ -66,16 +66,14 @@ Transmission.Remote = (function() {
   };
   
   var requestAllTorrentIds = function() {
-    this.dispatchEvent(
-      new Transmission.RemoteEvent.RequestedAllTorrentIds()
-    );
-    torrentGet.bind(this)({
-      fields: [ 'id' ]
-    }, function(args) {
-      this.dispatchEvent(
-        new Transmission.RemoteEvent.ReceivedAllTorrentIds( { ids: args.torrents.pluck('id') } )
-      );
-    }.bind(this));
+    this.dispatchEvent(new Transmission.RemoteEvent.RequestedAllTorrentIds());
+    
+    var callback = function(args) {
+      var event = new Transmission.RemoteEvent.ReceivedAllTorrentIds({ ids: args.torrents.pluck('id') });
+      this.dispatchEvent(event);
+    }.bind(this);
+    
+    torrentGet.bind(this)({ fields: [ 'id' ] }, callback);
   };
   
   var constructor = function(config) {
