@@ -7,24 +7,47 @@ Transmission.Torrent = (function() {
   var getFiles = function() { return this.files; };
   
   var updateAttributes = function(new_attributes) {
-    this.attributes = Object.extend(this.attributes, new_attributes);
+    var new_attribute_value;
+    
+    for (var attribute in new_attributes) {
+      new_attribute_value = new_attributes[attribute];
+      if (this.attributes[attribute] != new_attribute_value) {
+        this.attributes[attribute] = new_attribute_value;
+        if (this.attribute_callbacks[attribute]) {
+          this.attribute_callbacks[attribute].each(function(callback) {
+            callback();
+          });
+        }
+      }
+    }
   };
   
   var getAttribute = function(attribute) {
     return this.attributes[attribute];
   };
   
+  var addAttributeEventListener = function(attribute, callback) {
+    if (!this.attribute_callbacks[attribute]) {
+      this.attribute_callbacks[attribute] = [];
+    }
+    this.attribute_callbacks[attribute].push(callback);
+  };
+  
   var constructor = function(id) {
-    this.id = id;
-    this.files = [];
+    this.id         = id;
+    this.files      = [];
     this.attributes = {};
+    
+    this.attribute_callbacks = {};
   };
   
   constructor.prototype = {
     getId: getId,
     getFiles: getFiles,
     updateAttributes: updateAttributes,
-    getAttribute: getAttribute
+    getAttribute: getAttribute,
+    
+    addAttributeEventListener: addAttributeEventListener
   };
   
   return constructor;
