@@ -17,6 +17,42 @@ return {
     
   },
   
+  testMissingXTransmissionSessionId: function() {
+    var transmission_session_id = 'lYLlxjhWbBZxNac9syPk3aND05DNFxUtVO7TIcOYeUtJN9ra',
+        
+        failed_transport = new MockXmlHttpRequest().
+          setServerResponseHeader(Transmission.Remote.X_TRANSMISSION_SESSION_ID, transmission_session_id).
+          serverResponds('yada yada', 409),
+        
+        successful_transport = new MockXmlHttpRequest().
+          serverRespondsJSON({ arguments: { torrents: [ { id: 1 } ] }, result: 'success' }, 200);
+    
+    jack.expect('Ajax.getTransport').exactly(2).returnValues(
+      failed_transport,
+      successful_transport);
+    
+    var invalid_session_id_fired, received_all_torrent_ids,
+        remote = new Transmission.Remote({ RPC_URL: 'url' });
+    
+    remote.addEventListener(Transmission.RemoteEvent.InvalidSessionId, function(event) {
+      invalid_session_id_fired = true;
+    });
+    remote.addEventListener(Transmission.RemoteEvent.ReceivedAllTorrentIds, function(event) {
+      received_all_torrent_ids = true;
+    });
+    
+    remote.requestAllTorrentIds();
+    this.wait(10, function() {
+      this.assert(invalid_session_id_fired,
+        'Expected invalid session id event to have fired');
+      this.assert(received_all_torrent_ids,
+        'Expected to have re-requested and received all torrent ids');
+        console.log(successful_transport.requestHeaders);
+      this.assertEqual(transmission_session_id, successful_transport.requestHeaders[Transmission.Remote.X_TRANSMISSION_SESSION_ID],
+        'Expected re-request to have used updated session id header');
+    });
+  },
+  
   testGetAllIds: function() {
     var transport = new MockXmlHttpRequest().serverRespondsJSON({
       arguments: {

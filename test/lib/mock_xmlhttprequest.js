@@ -12,7 +12,7 @@ function MockXmlHttpRequest() {
     /**
      * stores the headers set on the request
      */
-    this.requestHeaderNamesToValues = {};
+    this.requestHeaders = {};
     this._serverResponseSet = false;
     this._serverResponseBody = undefined;
     this._serverResponseHeaders = {};
@@ -58,7 +58,7 @@ MockXmlHttpRequest.prototype.send = function(data) {
  * @param value
  */
 MockXmlHttpRequest.prototype.setRequestHeader = function(label, value) {
-    this.requestHeaderNamesToValues[label] = value;
+    this.requestHeaders[label] = value;
 };
 
 /** Implements getResponseHeader by returning mock values stored before-hand by the tester
@@ -84,12 +84,17 @@ MockXmlHttpRequest.prototype.serverResponds = function(responseBody, responseSta
 
 MockXmlHttpRequest.prototype.serverRespondsJSON = function(responseBody, responseStatus) {
     if (undefined === responseStatus) { responseStatus = 200; }
-    this.serverResponseHeader('Content-type', 'application/json');
-    this.serverResponds(Object.toJSON(responseBody), responseStatus);
-    return this;
+    return this.serverResponseHeaders({
+        'Content-type': 'application/json'
+      }).serverResponds(Object.toJSON(responseBody), responseStatus);
 };
 
-MockXmlHttpRequest.prototype.serverResponseHeader = function(name, value) {
+MockXmlHttpRequest.prototype.serverResponseHeaders = function(headers) {
+  Object.extend(this._serverResponseHeaders, headers);
+  return this;
+};
+
+MockXmlHttpRequest.prototype.setServerResponseHeader = function(name, value) {
   this._serverResponseHeaders[name] = value;
   return this;
 };

@@ -6,19 +6,36 @@
 */
 Transmission.RemoteEvent = Transmission.Events(
   'RequestedAllTorrentIds', 'ReceivedAllTorrentIds',
-  'ReceivedFields', 'ReceivedTorrentFields');
+  'ReceivedFields', 'ReceivedTorrentFields', 'InvalidSessionId');
 
 Transmission.Remote = (function() {
+  var transmission_session_id;
+  
   var rpc = function(data, callback) {
-    var url = this.config.RPC_URL;
+    var remote = this,
+        url = this.config.RPC_URL;
     if (!url) { return; }
+    
+    var requestHeaders = {};
+    requestHeaders[Transmission.Remote.X_TRANSMISSION_SESSION_ID] = transmission_session_id;
     
     new Ajax.Request(url, {
       postBody: Object.toJSON(data),
+      requestHeaders: requestHeaders,
       onSuccess: function(response) {
         var json = response.responseJSON;
         if ('success' === json.result) {
           callback(json.arguments);
+        }
+      },
+      on409: function(response) {
+        var header_session_id = response.getHeader(Transmission.Remote.X_TRANSMISSION_SESSION_ID);
+        // TODO: if (header_session_id && header_session_id != transmission_session_id)
+        // handle case where transmission daemon sends 409 and session already matches
+        if (header_session_id) {
+          transmission_session_id = header_session_id;
+          remote.dispatchEvent(new Transmission.RemoteEvent.InvalidSessionId());
+          rpc.bind(remote)(data, callback);
         }
       }
     });
@@ -86,6 +103,8 @@ Transmission.Remote = (function() {
     requestFields: requestFields,
     groupedRequestFields: groupedRequestFields
   });
+  
+  constructor.X_TRANSMISSION_SESSION_ID = 'X-Transmission-Session-Id';
   
   return constructor;
   
