@@ -46,6 +46,18 @@ function() { return {
     });
     torrent.updateAttributes({ hashString: 'b126e1ea1b49c79613f779ac0f36a9714e823fcb' });
     this.assert(!attribute_updated);
+  },
+  
+  testAddAttributesEventListener: function() {
+    var torrent = new Transmission.Torrent(1),
+        attribute_update_count = 0;
+    torrent.addAttributesEventListener([ 'haveUnchecked', 'hashString' ], function() {
+      attribute_update_count++;
+    });
+    torrent.updateAttributes({ hashString: 'b126e1ea1b49c79613f779ac0f36a9714e823fcb' });
+    this.assertEqual(1, attribute_update_count);
+    torrent.updateAttributes({ haveUnchecked: 10 });
+    this.assertEqual(2, attribute_update_count);
   }
   
 }; }

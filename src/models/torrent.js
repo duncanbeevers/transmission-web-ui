@@ -33,6 +33,12 @@ Transmission.Torrent = (function() {
     this.attribute_callbacks[attribute].push(callback);
   };
   
+  var addAttributesEventListener = function(attributes, callback) {
+    for (var i = attributes.length - 1; i >= 0; i--) {
+      this.addAttributeEventListener(attributes[i], callback);
+    }
+  };
+  
   var constructor = function(id) {
     this.id         = id;
     this.files      = [];
@@ -47,7 +53,8 @@ Transmission.Torrent = (function() {
     updateAttributes: updateAttributes,
     getAttribute: getAttribute,
     
-    addAttributeEventListener: addAttributeEventListener
+    addAttributeEventListener: addAttributeEventListener,
+    addAttributesEventListener: addAttributesEventListener
   };
   
   return constructor;
