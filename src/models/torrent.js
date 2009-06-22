@@ -7,7 +7,7 @@ Transmission.Torrent = (function() {
   var getFiles = function() { return this.files; };
   
   var updateAttributes = function(new_attributes) {
-    var new_attribute_value;
+    var new_attribute_value, callbacks = [];
     
     for (var attribute in new_attributes) {
       new_attribute_value = new_attributes[attribute];
@@ -15,11 +15,15 @@ Transmission.Torrent = (function() {
         this.attributes[attribute] = new_attribute_value;
         if (this.attribute_callbacks[attribute]) {
           this.attribute_callbacks[attribute].each(function(callback) {
-            callback();
+            if (!callbacks.include(callback)) {
+              callbacks.push(callback);
+            }
           });
         }
       }
     }
+    
+    callbacks.each(function(callback) { callback(); });
   };
   
   var getAttribute = function(attribute) {
