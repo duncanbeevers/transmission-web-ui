@@ -60,6 +60,66 @@ function() { return {
       this.assert(dispatcher1_fired, 'Expected dispatcher to have executed callback for event sent to first dispatcher');
       this.assert(!dispatcher2_fired, 'Expected 2nd dispatcher not to executed callback for event sent to first dispatcher');
     });
+  },
+  
+  testGetAttribute: function() {
+    var listener = new Transmission.AttributeEventDispatcher();
+    listener.updateAttributes({
+      'attribute1': 'value1'
+    });
+    
+    this.assertEqual('value1', listener.getAttribute('attribute1'),
+      'Expected attribute event dispatcher to track its own attributes');
+  },
+  
+  testAddAttributeEventListener: function() {
+    var listener = new Transmission.AttributeEventDispatcher(),
+        attribute_updated;
+    
+    listener.addAttributeEventListener('attribute1', function() {
+      attribute_updated = true;
+    });
+    
+    listener.updateAttributes({
+      'attribute1': 1
+    });
+    
+    this.wait(10, function() {
+      this.assert(attribute_updated,
+        'Expected attribute event listener to have fired when observed attribute was updated');
+    });
+  },
+  
+  testAttributeEventListenerShouldRequireChangeInValue: function() {
+    var listener = new Transmission.AttributeEventDispatcher(),
+        attribute_updated = false;
+    listener.updateAttributes({ hashString: 'b126e1ea1b49c79613f779ac0f36a9714e823fcb' });
+    
+    listener.addAttributeEventListener('hashString', function() {
+      attribute_updated = true;
+    });
+    listener.updateAttributes({ hashString: 'b126e1ea1b49c79613f779ac0f36a9714e823fcb' });
+    this.assert(!attribute_updated);
+  },
+  
+  testAddAttributesEventListener: function() {
+    var listener = new Transmission.AttributeEventDispatcher(),
+        attribute_update_count = 0;
+    listener.addAttributesEventListener([ 'haveUnchecked', 'hashString' ], function() {
+      attribute_update_count++;
+    });
+    
+    listener.updateAttributes({ hashString: 'b126e1ea1b49c79613f779ac0f36a9714e823fcb' });
+    this.assertEqual(1, attribute_update_count);
+    
+    listener.updateAttributes({ haveUnchecked: 10 });
+    this.assertEqual(2, attribute_update_count);
+    
+    listener.updateAttributes({
+      hashString: 'b126e1ea1b49c79613f779ac0f36a9714e823fcc',
+      haveUnchecked: 11
+    });
+    this.assertEqual(3, attribute_update_count);
   }
   
 }; }

@@ -34,6 +34,69 @@ Transmission.EventDispatcher = (function() {
 })();
 
 /**
+  When a class need to register event listeners on specific attributes of
+  itself, and to expose its attributes through an observable interface,
+  it prototypically-extends AttributeEventDispatcher,
+  allowing callbacks to be registered observing changes to specific
+  attributes or groups of attributes of the instance.
+  
+  Event dispatch is triggered through the updateAttributes interface of the instance.
+**/
+Transmission.AttributeEventDispatcher = (function() {
+  var addAttributeEventListener = function(attribute, callback) {
+    if (!this.attribute_event_callbacks[attribute]) {
+      this.attribute_event_callbacks[attribute] = [];
+    }
+    this.attribute_event_callbacks[attribute].push(callback);
+  };
+  
+  var addAttributesEventListener = function(attributes, callback) {
+    for (var i = attributes.length - 1; i >= 0; i--) {
+      this.addAttributeEventListener(attributes[i], callback);
+    }
+  };
+  
+  var updateAttributes = function(attributes) {
+    var attribute_value,
+        callbacks = [];
+    
+    for (var attribute in attributes) {
+      attribute_value = attributes[attribute];
+      if (this.attributes[attribute] != attribute_value) {
+        this.attributes[attribute] = attribute_value;
+        if (this.attribute_event_callbacks[attribute]) {
+          this.attribute_event_callbacks[attribute].each(function(callback) {
+            if (!callbacks.include(callback)) {
+              callbacks.push(callback);
+            }
+          });
+        }
+      }
+    }
+    
+    callbacks.each(function(callback) { callback(); });
+  };
+  
+  var getAttribute = function(attribute) {
+    return this.attributes[attribute];
+  };
+  
+  var constructor = function() {
+    this.attributes = {};
+    this.attribute_event_callbacks = {};
+  };
+  
+  constructor.prototype = {
+    updateAttributes: updateAttributes,
+    getAttribute: getAttribute,
+    addAttributeEventListener: addAttributeEventListener,
+    addAttributesEventListener: addAttributesEventListener
+  };
+  
+  return constructor;
+})();
+
+/**
   Conveniently construct a namespace of events
   
     Transmission.TorrentEvents = Transmission.Events('TorrentAdded', 'TorrentRemoved');
