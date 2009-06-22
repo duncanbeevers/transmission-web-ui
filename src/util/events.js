@@ -8,23 +8,30 @@
   
   Event dispatch itself should be invoked within the instance.
 **/
-Transmission.EventDispatcher = (function() { return function() {
-  var callbacks = {};
+Transmission.EventDispatcher = (function() {
+  var constructor =  function() {
+    this.initialize();
+  };
   
-  return {
+  constructor.prototype = {
+    initialize: function() {
+      this.event_callbacks = {};
+    },
     dispatchEvent: function(event) {
-      (callbacks[event.getType()] || []).each(function(callback) {
+      (this.event_callbacks[event.getType()] || []).each(function(callback) {
         callback.defer(event);
       });
     },
     addEventListener: function(event_type, callback) {
       var t = event_type.getType();
       
-      if (!callbacks[t]) { callbacks[t] = []; }
-      callbacks[t].push(callback);
+      if (!this.event_callbacks[t]) { this.event_callbacks[t] = []; }
+      this.event_callbacks[t].push(callback);
     }
   };
-}; })();
+  
+  return constructor;
+})();
 
 /**
   Conveniently construct a namespace of events

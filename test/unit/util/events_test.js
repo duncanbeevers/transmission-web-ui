@@ -43,6 +43,23 @@ function() { return {
     this.wait(10, function() {
       this.assertIdentical(event_data, received_data);
     });
+  },
+  
+  testAddEventsAreDispatchedPerInstance: function() {
+    var namespace = Transmission.Events('LevelUp');
+    
+    var dispatcher1 = new Transmission.EventDispatcher(),
+        dispatcher2 = new Transmission.EventDispatcher(),
+        dispatcher1_fired = false,
+        dispatcher2_fired = false;
+    dispatcher1.addEventListener(namespace.LevelUp, function() { dispatcher1_fired = true; });
+    dispatcher2.addEventListener(namespace.LevelUp, function() { dispatcher2_fired = true; });
+    
+    dispatcher1.dispatchEvent(new namespace.LevelUp());
+    this.wait(100, function() {
+      this.assert(dispatcher1_fired, 'Expected dispatcher to have executed callback for event sent to first dispatcher');
+      this.assert(!dispatcher2_fired, 'Expected 2nd dispatcher not to executed callback for event sent to first dispatcher');
+    });
   }
   
 }; }
