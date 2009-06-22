@@ -15,9 +15,9 @@ Transmission.TorrentFile = (function() {
     return this.attributes[attribute];
   };
   
-  var constructor = function(torrent) {
+  var constructor = function(torrent, attributes) {
     this.torrent = torrent;
-    this.attributes = {};
+    this.attributes = attributes || {};
   };
   
   constructor.prototype = {
