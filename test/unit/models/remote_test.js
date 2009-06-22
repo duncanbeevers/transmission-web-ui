@@ -47,7 +47,6 @@ return {
         'Expected invalid session id event to have fired');
       this.assert(received_all_torrent_ids,
         'Expected to have re-requested and received all torrent ids');
-        console.log(successful_transport.requestHeaders);
       this.assertEqual(transmission_session_id, successful_transport.requestHeaders[Transmission.Remote.X_TRANSMISSION_SESSION_ID],
         'Expected re-request to have used updated session id header');
     });
