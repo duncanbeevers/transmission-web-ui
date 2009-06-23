@@ -25,7 +25,7 @@ Transmission.extend = function() {
   };
   
   var o = {};
-  for (var i = arguments.length; i >= 0; i--) {
+  for (var i = arguments.length - 1; i >= 0; i--) {
     o = f(arguments[i], o);
   }
   return o;
