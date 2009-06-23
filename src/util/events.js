@@ -9,25 +9,30 @@
   Event dispatch itself should be invoked within the instance.
 **/
 Transmission.EventDispatcher = (function() {
-  var constructor =  function() {
-    this.initialize();
+  var initialize = function(o) {
+    if (!o.event_callbacks) { o.event_callbacks = {}; }
   };
   
+  var dispatchEvent = function(event) {
+    initialize(this);
+    (this.event_callbacks[event.getType()] || []).each(function(callback) {
+      callback.defer(event);
+    });
+  };
+  
+  var addEventListener = function(event_type, callback) {
+    initialize(this);
+    var t = event_type.getType();
+    
+    if (!this.event_callbacks[t]) { this.event_callbacks[t] = []; }
+    this.event_callbacks[t].push(callback);
+  };
+  
+  var constructor =  function() {};
+  
   constructor.prototype = {
-    initialize: function() {
-      this.event_callbacks = {};
-    },
-    dispatchEvent: function(event) {
-      (this.event_callbacks[event.getType()] || []).each(function(callback) {
-        callback.defer(event);
-      });
-    },
-    addEventListener: function(event_type, callback) {
-      var t = event_type.getType();
-      
-      if (!this.event_callbacks[t]) { this.event_callbacks[t] = []; }
-      this.event_callbacks[t].push(callback);
-    }
+    dispatchEvent: dispatchEvent,
+    addEventListener: addEventListener
   };
   
   return constructor;
@@ -43,7 +48,13 @@ Transmission.EventDispatcher = (function() {
   Event dispatch is triggered through the updateAttributes interface of the instance.
 **/
 Transmission.AttributeEventDispatcher = (function() {
+  var initialize = function(o) {
+    if (!o.attributes) { o.attributes = {}; }
+    if (!o.attribute_event_callbacks) { o.attribute_event_callbacks = {}; }
+  };
+  
   var addAttributeEventListener = function(attribute, callback) {
+    initialize(this);
     if (!this.attribute_event_callbacks[attribute]) {
       this.attribute_event_callbacks[attribute] = [];
     }
@@ -51,12 +62,15 @@ Transmission.AttributeEventDispatcher = (function() {
   };
   
   var addAttributesEventListener = function(attributes, callback) {
+    initialize(this);
     for (var i = attributes.length - 1; i >= 0; i--) {
       this.addAttributeEventListener(attributes[i], callback);
     }
   };
   
   var updateAttributes = function(attributes) {
+    initialize(this);
+    
     var attribute_value,
         callbacks = [];
     
@@ -74,21 +88,26 @@ Transmission.AttributeEventDispatcher = (function() {
       }
     }
     
-    callbacks.each(function(callback) { callback(); });
+    var updated_attributes = this.attributes;
+    callbacks.each(function(callback) { callback(updated_attributes); });
   };
   
   var getAttribute = function(attribute) {
+    initialize(this);
     return this.attributes[attribute];
   };
   
-  var constructor = function() {
-    this.attributes = {};
-    this.attribute_event_callbacks = {};
+  var getAttributes = function() {
+    initialize(this);
+    return this.attributes;
   };
+  
+  var constructor = function() {};
   
   constructor.prototype = {
     updateAttributes: updateAttributes,
     getAttribute: getAttribute,
+    getAttributes: getAttributes,
     addAttributeEventListener: addAttributeEventListener,
     addAttributesEventListener: addAttributesEventListener
   };

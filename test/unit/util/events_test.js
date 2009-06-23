@@ -72,6 +72,15 @@ function() { return {
       'Expected attribute event dispatcher to track its own attributes');
   },
   
+  testGetAttributes: function() {
+    var listener = new Transmission.AttributeEventDispatcher();
+    var provided_attributes = { 'attribute1': 'value1' };
+    listener.updateAttributes(provided_attributes);
+    
+    this.assertHashEqual(provided_attributes, listener.getAttributes(),
+      'Expected all attributes to have been returned');
+  },
+  
   testAddAttributeEventListener: function() {
     var listener = new Transmission.AttributeEventDispatcher(),
         attribute_updated;
@@ -104,13 +113,16 @@ function() { return {
   
   testAddAttributesEventListener: function() {
     var listener = new Transmission.AttributeEventDispatcher(),
-        attribute_update_count = 0;
-    listener.addAttributesEventListener([ 'haveUnchecked', 'hashString' ], function() {
+        attribute_update_count = 0,
+        passed_attributes;
+    listener.addAttributesEventListener([ 'haveUnchecked', 'hashString' ], function(attributes) {
+      passed_attributes = attributes;
       attribute_update_count++;
     });
     
     listener.updateAttributes({ hashString: 'b126e1ea1b49c79613f779ac0f36a9714e823fcb' });
     this.assertEqual(1, attribute_update_count);
+    this.assertHashEqual(listener.getAttributes(), passed_attributes);
     
     listener.updateAttributes({ haveUnchecked: 10 });
     this.assertEqual(2, attribute_update_count);
