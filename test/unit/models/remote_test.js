@@ -25,6 +25,7 @@ return {
           serverResponds('yada yada', 409),
         
         successful_transport = new MockXmlHttpRequest().
+          setServerResponseHeader(Transmission.Remote.X_TRANSMISSION_SESSION_ID, transmission_session_id).
           serverRespondsJSON({ arguments: { torrents: [ { id: 1 } ] }, result: 'success' }, 200);
     
     jack.expect('Ajax.getTransport').exactly(2).returnValues(
@@ -156,7 +157,7 @@ return {
       arguments: { torrents: [ fixtureTorrentData1 ] }, 
       result: "success"
     });
-    jack.expect('Ajax.getTransport').exactly('2 times').returnValue(transport);
+    jack.expect('Ajax.getTransport').exactly(2).returnValue(transport);
     
     remote.groupedRequestFields([ 1 ], requested_fields);
     this.wait(1, function() {

@@ -41,12 +41,12 @@ Transmission.Remote = (function() {
     });
   };
   
-  var torrentGet = function(args, callback) {
-    rpc.bind(this)({ method: 'torrent-get', arguments: args }, callback);
+  var torrentGet = function(o, args, callback) {
+    rpc.bind(o)({ method: 'torrent-get', arguments: args }, callback);
   };
   
   var requestFields = function(ids, fields) {
-    torrentGet.bind(this)({
+    torrentGet(this, {
       ids: ids, fields: fields.concat('id')
     }, function(args) {
       var torrents_data = args.torrents;
@@ -90,7 +90,7 @@ Transmission.Remote = (function() {
       this.dispatchEvent(event);
     }.bind(this);
     
-    torrentGet.bind(this)({ fields: [ 'id' ] }, callback);
+    torrentGet(this, { fields: [ 'id' ] }, callback);
   };
   
   var constructor = function(config) {
@@ -98,7 +98,7 @@ Transmission.Remote = (function() {
     this.request_fields_groups = [];
   };
   
-  constructor.prototype = Transmission.extend(new Transmission.TorrentEventDispatcher(), {
+  constructor.prototype = Transmission.extend(Transmission.TorrentEventDispatcher.prototype, {
     requestAllTorrentIds: requestAllTorrentIds,
     requestFields: requestFields,
     groupedRequestFields: groupedRequestFields
