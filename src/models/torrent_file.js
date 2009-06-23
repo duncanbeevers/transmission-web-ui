@@ -11,7 +11,7 @@ Transmission.TorrentFile = (function() {
     this.torrent = torrent;
   };
   
-  constructor.prototype = Transmission.extend(new Transmission.AttributeEventDispatcher(), {
+  constructor.prototype = Transmission.extend(Transmission.AttributeEventDispatcher.prototype, {
     getTorrent: getTorrent
   });
   
