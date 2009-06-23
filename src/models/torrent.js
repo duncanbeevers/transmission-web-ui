@@ -1,4 +1,5 @@
 //= require <transmission>
+//= require <torrent_file>
 //= require <events>
 
 Transmission.Torrent = (function() {
@@ -6,60 +7,34 @@ Transmission.Torrent = (function() {
   
   var getFiles = function() { return this.files; };
   
-  var updateAttributes = function(new_attributes) {
-    var new_attribute_value, callbacks = [];
-    
-    for (var attribute in new_attributes) {
-      new_attribute_value = new_attributes[attribute];
-      if (this.attributes[attribute] != new_attribute_value) {
-        this.attributes[attribute] = new_attribute_value;
-        if (this.attribute_callbacks[attribute]) {
-          this.attribute_callbacks[attribute].each(function(callback) {
-            if (!callbacks.include(callback)) {
-              callbacks.push(callback);
-            }
-          });
-        }
-      }
+  var updateFiles = function(attribute, attributes) {
+    var files = attributes[attribute];
+    if (this.files.length < files.length) {
+      var torrent = this;
+      this.files = files.map(function() {
+        return new Transmission.TorrentFile(torrent);
+      });
     }
-    
-    callbacks.each(function(callback) { callback(); });
-  };
-  
-  var getAttribute = function(attribute) {
-    return this.attributes[attribute];
-  };
-  
-  var addAttributeEventListener = function(attribute, callback) {
-    if (!this.attribute_callbacks[attribute]) {
-      this.attribute_callbacks[attribute] = [];
-    }
-    this.attribute_callbacks[attribute].push(callback);
-  };
-  
-  var addAttributesEventListener = function(attributes, callback) {
-    for (var i = attributes.length - 1; i >= 0; i--) {
-      this.addAttributeEventListener(attributes[i], callback);
+    for (var i = 0, len = files.length; i < len; i++) {
+      this.files[i].updateAttributes(files[i]);
     }
   };
   
   var constructor = function(id) {
-    this.id         = id;
-    this.files      = [];
-    this.attributes = {};
-    
-    this.attribute_callbacks = {};
+    initialize.bind(this)(id);
   };
   
-  constructor.prototype = {
-    getId: getId,
-    getFiles: getFiles,
-    updateAttributes: updateAttributes,
-    getAttribute: getAttribute,
-    
-    addAttributeEventListener: addAttributeEventListener,
-    addAttributesEventListener: addAttributesEventListener
+  var initialize = function(id) {
+    this.id         = id;
+    this.files      = [];
+    this.addAttributeEventListener('files', updateFiles.curry('files').bind(this));
+    this.addAttributeEventListener('fileStats', updateFiles.curry('fileStats').bind(this));
   };
+  
+  constructor.prototype = Transmission.extend(Transmission.AttributeEventDispatcher.prototype, {
+    getId: getId,
+    getFiles: getFiles
+  });
   
   return constructor;
   
